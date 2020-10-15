@@ -13,13 +13,13 @@ jobs:
       - python/save-cache
       - run:
           name: Install dependencies
-          command:
+          command: |
             source venv/bin/activate
             pip install -r requirements.txt
             python test.py
       - run:
           name: Run unit tests
-          command:
+          command: |
             source venv/bin/activate
             python test.py
 
