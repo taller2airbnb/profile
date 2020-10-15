@@ -1,0 +1,29 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@0.2.1
+
+jobs:
+  build-and-test:
+    executor: python/default
+    steps:
+      - checkout
+      - python/load-cache
+      - python/install-deps
+      - python/save-cache
+      - run:
+          name: Install dependencies
+          command:
+            source venv/bin/activate
+            pip install -r requirements.txt
+            python test.py
+      - run:
+          name: Run unit tests
+          command:
+            source venv/bin/activate
+            python test.py
+
+workflows:
+  main:
+    jobs:
+      - build-and-test
