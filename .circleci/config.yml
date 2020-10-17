@@ -25,7 +25,7 @@ jobs:
             python -m unittest
       - run:
           name: Build Docker Image
-          command: docker build -t $IMAGE_NAME:latest
+          command: docker build -t $IMAGE_NAME:latest .
 
 workflows:
   main:
