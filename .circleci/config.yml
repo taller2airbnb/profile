@@ -23,6 +23,9 @@ jobs:
             python3 -m venv venv
             source venv/bin/activate
             python -m unittest
+      - run:
+          name: Build Docker Image
+          command: docker build -t $IMAGE_NAME:latest
 
 workflows:
   main:
