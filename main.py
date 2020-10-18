@@ -2,22 +2,29 @@ import os
 import requests
 
 from flask import Flask, jsonify, render_template
+from flask_cors import CORS, cross_origin
+
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 @app.route("/")
+@cross_origin()
 def home():
     return render_template("home.html")
 
 
 @app.route("/business-status")
+@cross_origin()
 def business():
     response = requests.get('https://taller2airbnb-businesscore.herokuapp.com/health')
     return response.json()
 
 
-@app.route("/health.json")
+@app.route("/health")
+@cross_origin()
 def health():
     return jsonify({"status": "UP", "from": "Profile"}), 200
 
