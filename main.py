@@ -1,13 +1,13 @@
 import os
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def home():
-    return "Hello, World!"
+    return render_template("home.html")
 
 
 @app.route("/health.json")
