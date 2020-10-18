@@ -1,4 +1,5 @@
 import os
+import requests
 
 from flask import Flask, jsonify, render_template
 
@@ -10,9 +11,15 @@ def home():
     return render_template("home.html")
 
 
+@app.route("/business-status")
+def business():
+    response = requests.get('https://taller2airbnb-businesscore.herokuapp.com/health')
+    return response.json()
+
+
 @app.route("/health.json")
 def health():
-    return jsonify({"status": "UP"}), 200
+    return jsonify({"status": "UP", "from": "Profile"}), 200
 
 
 if __name__ == '__main__':
