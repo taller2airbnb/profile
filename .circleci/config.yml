@@ -39,20 +39,7 @@ jobs:
               echo "Heroku is already installed. No operation was performed."
             fi
   docker-build-release:
-    executor: python/default
-    parameters:
-      app-name:
-        description: "The Heroku app name to which the application should be deployed"
-        type: string
-        default: "floating-ocean-24238"
-      app-arg:
-        description: "The Heroku Dockerfile args"
-        type: string
-        default: "none"
-      app-type:
-        description: "The Heroku app type (web or worker) of the application to be deployed"
-        type: string
-        default: "web"
+    executor: docker-publisher
     steps:
       - run:
           name: Login into Heroku Docker Repository
@@ -61,8 +48,8 @@ jobs:
       - run:
           name: Deploy Heroku Docker Container
           command: |
-            heroku container:push << parameters.app-type >> -a << parameters.app-name >> --arg << parameters.app-arg >>
-            heroku container:release << parameters.app-type >> -a << parameters.app-name >>
+            heroku container:push web -a taller2airbnb-profile
+            heroku container:release web -a taller2airbnb-profile
 
 workflows:
   main:
