@@ -19,7 +19,7 @@ jobs:
             export APP_SETTINGS="config.DevelopmentConfig"
             python -m unittest
 
-  build:
+  build-and-deploy:
     docker:
       - image: circleci/python:3.6.4 # every job must define an image for the docker executor and subsequent jobs may define a different image.
     steps:
@@ -55,5 +55,5 @@ jobs:
 workflows:
   main:
     jobs:
-      - test-with-postgres
-      - build
+      - test
+      - build-and-deploy
