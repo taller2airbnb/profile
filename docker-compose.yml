@@ -15,7 +15,7 @@ services:
       context: ${PWD}
       dockerfile: Dockerfile
     environment:
-      APP_SETTINGS: config.DevelopmentConfig
+      APP_SETTINGS: config.DevelopmentInDockerConfig
     depends_on:
       - db
     ports:

@@ -16,7 +16,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            export APP_SETTINGS="config.TestingConfig"
+            export APP_SETTINGS="config.TestingWithoutDBConfig"
             python -m unittest
 
   build-and-deploy:

@@ -76,7 +76,7 @@ target/
 celerybeat-schedule
 
 # dotenv
-.flaskenv
+env.dockerdev
 
 # virtualenv
 venv/

@@ -1,5 +1,6 @@
-from application.model import Users
-from application import database, commands
+from model import Users
+import database
+import commands
 import os
 import requests
 from flask import Flask, jsonify, render_template

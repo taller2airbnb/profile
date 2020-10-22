@@ -13,17 +13,26 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
+    START_DB = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 
-class DevelopmentConfig(Config):
+class DevelopmentInDockerConfig(Config):
     ENV = "development"
     DEBUG = True
+    START_DB = True
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@profile_db_1:5432/postgres'
 
 
-class TestingConfig(Config):
+class TestingWithoutDBConfig(Config):
     ENV = "development"
     DEBUG = True
-    TESTING = True
+    START_DB = False
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/postgres'
+
+
+class TestingWithDBConfig(Config):
+    ENV = "development"
+    DEBUG = True
+    START_DB = True
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/postgres'

@@ -9,5 +9,5 @@ def init_app(app):
 
 
 def create_tables():
-    if not current_app.config['TESTING']:
+    if current_app.config['START_DB']:
         db.create_all()

@@ -10,3 +10,7 @@ class FlaskTest(unittest.TestCase):
         response = tester.get("/")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
+
+
+if __name__ == '__main__':
+    unittest.main()
