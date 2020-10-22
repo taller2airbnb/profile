@@ -1,3 +1,4 @@
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -8,4 +9,5 @@ def init_app(app):
 
 
 def create_tables():
-    db.create_all()
+    if not current_app.config['TESTING']:
+        db.create_all()

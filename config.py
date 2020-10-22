@@ -20,3 +20,10 @@ class DevelopmentConfig(Config):
     ENV = "development"
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@profile_db_1:5432/postgres'
+
+
+class TestingConfig(Config):
+    ENV = "development"
+    DEBUG = True
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/postgres'
