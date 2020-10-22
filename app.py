@@ -5,7 +5,6 @@ import requests
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS, cross_origin
 
-
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -14,6 +13,11 @@ app.config.from_object(os.environ['APP_SETTINGS'])
 # setup all our dependencies, for now only database using application factory pattern
 database.init_app(app)
 commands.init_app(app)
+
+
+@app.before_first_request
+def create_db():
+    database.create_tables()
 
 
 @app.route("/")
@@ -33,6 +37,7 @@ def add_new_item(item):
     database.db.session.commit()
 
     return jsonify({"success": model.name})
+
 
 @app.route("/business-status")
 @cross_origin()

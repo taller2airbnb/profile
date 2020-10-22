@@ -1,15 +1,18 @@
-# profile
+# Profile - Flask App
 
-flask create-db
-flask run
+## Development container mode
 
+*docker-compose build*
 
-docker build -t taller2airbnb-profile:latest .
+Crea los cotainers.
 
-docker run -e PORT=5000 -e APP_SETTINGS="config.DevelopmentConfig" -p 5000:5000 taller2airbnb-profile
+*docker-compose up*
 
-docker-compose run web bash 
-y luego
-flask create-db
+Levanta un container con la postegres db y otro con la web (además se crean las tablas). 
 
-docker exec -it profile_db_1 psql -U postgres
+## Docker - Heroku
+
+*docker build -t taller2airbnb-profile:latest .*
+
+Y usa su variable de ambiente para pegarle a la db de heroku.
+
