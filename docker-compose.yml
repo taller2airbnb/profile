@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_HOSTNAME: localhost
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+  web:
+    build:
+      context: ${PWD}
+      dockerfile: Dockerfile
+    environment:
+      APP_SETTINGS: config.DevelopmentInDockerConfig
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
