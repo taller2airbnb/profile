@@ -17,7 +17,8 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             export APP_SETTINGS="config.TestingWithoutDBConfig"
-            python -m unittest
+            coverage run -m unittest discover
+            coverage report -m
 
   build-and-deploy:
     docker:
