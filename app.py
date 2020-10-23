@@ -6,7 +6,9 @@ import requests
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS, cross_origin
 
+# setup app
 app = Flask(__name__)
+# setup CORS
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 # setup with the configuration provided by the user / environment
