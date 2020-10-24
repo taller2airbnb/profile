@@ -8,5 +8,5 @@ RUN pip install -e .
 EXPOSE 5000
 #ENTRYPOINT ["flask"]
 #CMD ["run"]
-ENTRYPOINT FLASK_APP=profile flask run --host=0.0.0.0
+ENTRYPOINT FLASK_APP=profile flask run --host=0.0.0.0 --port=$PORT
 
