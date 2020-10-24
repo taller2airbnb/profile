@@ -16,6 +16,8 @@ services:
       dockerfile: Dockerfile
     environment:
       APP_SETTINGS: config.DevelopmentInDockerConfig
+      FLASK_APP: profile
+      FLASK_ENV: development
     depends_on:
       - db
     ports:
