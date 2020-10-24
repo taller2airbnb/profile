@@ -1,5 +1,5 @@
-from database import db
-from model import Users
+from profile.database import db
+from profile.model import Users
 
 
 def create_db():

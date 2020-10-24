@@ -17,6 +17,7 @@ Levanta un container con la postegres db y otro con la web (además se crean las
 Y usa su variable de ambiente para pegarle a la db de heroku.
 
 ## Testing
+###Para ejecutar los test
 coverage run -m unittest discover
-## % Coverage
+### Para el % de coverage
 coverage report -m

@@ -1,6 +1,6 @@
-from model import Users
-import database
-import commands
+from profile.model import Users
+import profile.database
+import profile.commands
 import os
 import requests
 from flask import Flask, jsonify, render_template
