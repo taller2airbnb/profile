@@ -1,5 +1,5 @@
-from profile.database import db
-from profile.model import Users
+from fxprofile.database import db
+from fxprofile.model import Users
 
 
 def create_db():

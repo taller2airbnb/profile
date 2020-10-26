@@ -1,6 +1,3 @@
-import setuptools
+from setuptools import setup
 
-setuptools.setup(
-    name='profile',
-    packages=setuptools.find_packages(),
-)
+setup()

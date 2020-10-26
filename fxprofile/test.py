@@ -1,4 +1,4 @@
-from profile import app
+from fxprofile import app
 import unittest
 
 
@@ -17,6 +17,7 @@ class FlaskTest(unittest.TestCase):
         response = tester.get("/health")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
+
 
 if __name__ == '__main__':
     unittest.main()
