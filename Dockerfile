@@ -20,6 +20,5 @@ RUN pip install -e .
 
 
 EXPOSE 5000
-ENTRYPOINT waitress-serve --port $PORT --call "fxprofile:create_app"
-
-#ENTRYPOINT /app/start.sh
+#ENTRYPOINT waitress-serve --port $PORT --call "fxprofile:create_app"
+ENTRYPOINT /app/start.sh
