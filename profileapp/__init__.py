@@ -3,7 +3,7 @@ import profileapp.commands
 import os
 from flask import Flask
 from flask_cors import CORS
-from profileapp.status_info import bp_stinfo
+from profileapp.api.home_info import bp_homeinfo
 
 
 def create_app():
@@ -18,12 +18,12 @@ def create_app():
     database.init_app(app)
     commands.init_app(app)
 
-    CORS(bp_stinfo)  # enable CORS on the bp_stinfo blue print
+    CORS(bp_homeinfo)  # enable CORS on the bp_stinfo blue print
 
     @app.before_first_request
     def create_db():
         database.create_tables()
 
-    app.register_blueprint(bp_stinfo)
+    app.register_blueprint(bp_homeinfo)
 
     return app

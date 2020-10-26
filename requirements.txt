@@ -6,3 +6,4 @@ coverage
 flask_sqlalchemy
 flask_cors
 psycopg2
+pytest~=6.1.1

@@ -4,26 +4,26 @@ import requests
 from flask import Blueprint
 from flask import jsonify, render_template
 
-bp_stinfo = Blueprint('status_info', __name__, url_prefix='/')
+bp_homeinfo = Blueprint('status_info', __name__, url_prefix='/')
 
 
-@bp_stinfo.route("/")
+@bp_homeinfo.route("/")
 def home():
     return render_template("home.html")
 
 
-@bp_stinfo.route("/business-status")
+@bp_homeinfo.route("/business-status")
 def business():
     response = requests.get('https://taller2airbnb-businesscore.herokuapp.com/health')
     return response.json()
 
 
-@bp_stinfo.route("/health")
+@bp_homeinfo.route("/health")
 def health():
     return jsonify({"status": "UP", "from": "Profile"}), 200
 
 
-@bp_stinfo.route("/add/<string:item>", methods=['POST'])
+@bp_homeinfo.route("/add/<string:item>", methods=['POST'])
 def add_new_item(item):
     model = Users(name=item)
 
