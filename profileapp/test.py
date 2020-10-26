@@ -1,4 +1,4 @@
-from fxprofile import create_app
+from profileapp import create_app
 import unittest
 
 

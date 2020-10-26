@@ -1,4 +1,4 @@
-from fxprofile.database import db
+from profileapp.database import db
 
 
 class Users(db.Model):

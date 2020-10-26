@@ -1,6 +1,6 @@
-from fxprofile.model import Users
-import fxprofile.database
-import fxprofile.commands
+from profileapp.model import Users
+import profileapp.database
+import profileapp.commands
 import os
 import requests
 from flask import Flask, jsonify, render_template

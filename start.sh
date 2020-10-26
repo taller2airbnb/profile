@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-waitress-serve --port $PORT --call "fxprofile:create_app"
+waitress-serve --port $PORT --call "profileapp:create_app"
