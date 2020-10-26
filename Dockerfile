@@ -19,7 +19,7 @@ RUN pip install -e .
 # install dependencies
 
 
-EXPOSE $PORT
+EXPOSE 5000
 ENTRYPOINT waitress-serve --port $PORT --call "fxprofile:create_app"
 
 #ENTRYPOINT /app/start.sh
