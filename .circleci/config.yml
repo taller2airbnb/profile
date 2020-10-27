@@ -20,8 +20,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            flask create-db
-            export APP_SETTINGS="config.TestingWithoutDBConfig"
+            export APP_SETTINGS="config.TestingWithDBConfig"
             coverage run -m unittest discover
             coverage report -m
 
