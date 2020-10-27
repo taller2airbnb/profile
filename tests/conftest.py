@@ -7,6 +7,7 @@ from profileapp.database import db
 @pytest.fixture
 def app():
     app = create_app()
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/postgres'
 
     return app
 
