@@ -1,10 +1,9 @@
-from profileapp.model import Users
 import profileapp.database
 import profileapp.commands
 import os
-import requests
-from flask import Flask, jsonify, render_template
-from flask_cors import CORS, cross_origin
+from flask import Flask
+from flask_cors import CORS
+from profileapp.api.home_info import bp_homeinfo
 
 
 def create_app():
@@ -19,36 +18,12 @@ def create_app():
     database.init_app(app)
     commands.init_app(app)
 
+    CORS(bp_homeinfo)  # enable CORS on the bp_stinfo blue print
+
     @app.before_first_request
     def create_db():
         database.create_tables()
 
-    @app.route("/")
-    @cross_origin()
-    def home():
-        return render_template("home.html")
-
-    @app.route("/add/<string:item>", methods=['POST'])
-    def add_new_item(item):
-        model = Users(name=item)
-
-        # add to the database session
-        database.db.session.add(model)
-
-        # commit to persist into the database
-        database.db.session.commit()
-
-        return jsonify({"success": model.name})
-
-    @app.route("/business-status")
-    @cross_origin()
-    def business():
-        response = requests.get('https://taller2airbnb-businesscore.herokuapp.com/health')
-        return response.json()
-
-    @app.route("/health")
-    @cross_origin()
-    def health():
-        return jsonify({"status": "UP", "from": "Profile"}), 200
+    app.register_blueprint(bp_homeinfo)
 
     return app

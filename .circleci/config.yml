@@ -3,6 +3,10 @@ jobs:
   test:
     docker:
       - image: circleci/python:3.6.4 # every job must define an image for the docker executor and subsequent jobs may define a different image.
+      - image: circleci/postgres:9.6.2 # an example of how to specify a service container
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
     steps:
       - checkout
       - run:
@@ -16,7 +20,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            export APP_SETTINGS="config.TestingWithoutDBConfig"
+            export APP_SETTINGS="config.TestingWithDBConfig"
             coverage run -m unittest discover
             coverage report -m
 
