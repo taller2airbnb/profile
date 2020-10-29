@@ -1,4 +1,14 @@
-# Profile - Flask App
+# Profile Services - Flask App - API
+
+## Webserver Local
+
+Exportar variables de ambiente según config elegida:
+
+*export APP_SETTINGS=config.TestingWithDBConfig*
+
+Levantar a través de:
+
+*waitress-serve --call profileapp:create_app*
 
 ## Development container mode
 
