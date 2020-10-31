@@ -4,6 +4,7 @@ import os
 from flask import Flask
 from flask_cors import CORS
 from profileapp.api.home_info import bp_homeinfo
+from profileapp.api.register import bp_register
 
 
 def create_app():
@@ -25,5 +26,6 @@ def create_app():
         database.create_tables()
 
     app.register_blueprint(bp_homeinfo)
+    app.register_blueprint(bp_register)
 
     return app

@@ -20,11 +20,3 @@ class FlaskTest(unittest.TestCase):
         data = json.loads(response.get_data(as_text=True))
         self.assertEqual(data['status'], "UP")
         self.assertEqual(statuscode, 200)
-
-    def test_posting_name(self):
-        tester = create_app().test_client(self)
-        response = tester.post("/add/manu")
-        statuscode = response.status_code
-        data = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data['success'], "manu")
-        self.assertEqual(statuscode, 200)

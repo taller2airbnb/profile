@@ -21,16 +21,3 @@ def business():
 @bp_homeinfo.route("/health")
 def health():
     return jsonify({"status": "UP", "from": "Profile"}), 200
-
-
-@bp_homeinfo.route("/add/<string:item>", methods=['POST'])
-def add_new_item(item):
-    model = Users(name=item)
-
-    # add to the database session
-    database.db.session.add(model)
-
-    # commit to persist into the database
-    database.db.session.commit()
-
-    return jsonify({"success": model.name})
