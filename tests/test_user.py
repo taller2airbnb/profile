@@ -1,5 +1,3 @@
-from sqlalchemy.exc import IntegrityError
-
 from profileapp.model import Users
 
 
