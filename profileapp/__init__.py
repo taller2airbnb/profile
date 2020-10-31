@@ -1,3 +1,6 @@
+from sqlalchemy import event, DDL
+from profileapp.model import Profile
+
 import profileapp.database
 import profileapp.commands
 import os
@@ -5,6 +8,7 @@ from flask import Flask
 from flask_cors import CORS
 from profileapp.api.home_info import bp_homeinfo
 from profileapp.api.register import bp_register
+from profileapp.api.profile import bp_profile
 
 
 def create_app():
@@ -21,11 +25,15 @@ def create_app():
 
     CORS(bp_homeinfo)  # enable CORS on the bp_stinfo blue print
 
+    # event.listen(Profile.__table__, 'after_create', DDL(""" INSERT INTO profile (id_profile, description) VALUES (
+    # 0, 'admin'), (1, 'anfitrion'), (2, 'huesped') """))
+
     @app.before_first_request
     def create_db():
         database.create_tables()
 
     app.register_blueprint(bp_homeinfo)
     app.register_blueprint(bp_register)
+    app.register_blueprint(bp_profile)
 
     return app

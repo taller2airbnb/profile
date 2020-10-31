@@ -1,5 +1,5 @@
 from profileapp import database
-from profileapp.model import Users
+from profileapp.model import Users, Profile
 from flask import request
 from flask import Blueprint
 from flask import jsonify
@@ -32,6 +32,11 @@ def register_new_user():
     # if payload is valid it is stored in g.data
     post_data = request.get_json()
 
+    user_profile = post_data['profile']
+    if Profile.query.filter_by(id_profile=user_profile).first() is None:
+        # No existe perfil en tabla
+        return jsonify({'error': "non existent profile"}), 400
+
     user = Users(name=post_data['name'], email=post_data['email'],
                  national_id=post_data['national_id'], national_id_type=post_data['national_id_type'],
                  alias=post_data['alias'], password=post_data['password'])
@@ -43,6 +48,6 @@ def register_new_user():
         # commit to persist into the database
         database.db.session.commit()
     except:
-        return jsonify({'error': "user already exist"})
+        return jsonify({'error': "user already exist"}), 400
 
-    return jsonify({'id': user.id_user, 'name': user.name, 'alias': user.alias, 'email': user.email})
+    return jsonify({'id': user.id_user, 'name': user.name, 'alias': user.alias, 'email': user.email}), 200
