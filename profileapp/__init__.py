@@ -9,6 +9,7 @@ from flask_cors import CORS
 from profileapp.api.home_info import bp_homeinfo
 from profileapp.api.register import bp_register
 from profileapp.api.profiles import bp_profiles
+from profileapp.api.login import bp_login
 
 
 def create_app():
@@ -35,5 +36,6 @@ def create_app():
     app.register_blueprint(bp_homeinfo)
     app.register_blueprint(bp_register)
     app.register_blueprint(bp_profiles)
+    app.register_blueprint(bp_login)
 
     return app
