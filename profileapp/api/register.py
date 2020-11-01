@@ -3,7 +3,7 @@ from profileapp.model import Users, Profile
 from flask import request
 from flask import Blueprint
 from flask import jsonify
-import json
+import hashlib
 from flask_expects_json import expects_json
 
 schema_new_user = {
@@ -22,8 +22,6 @@ schema_new_user = {
 bp_register = Blueprint('register', __name__, url_prefix='/register/')
 
 
-# TODO: CREATE USER TIENE Q TENER PERFIL/rol.. refactor para user y luego json register con profile
-
 @bp_register.route("/", methods=['POST'])
 @expects_json(schema_new_user)
 def register_new_user():
@@ -32,14 +30,20 @@ def register_new_user():
     # if payload is valid it is stored in g.data
     post_data = request.get_json()
 
-    user_profile = post_data['profile']
-    if Profile.query.filter_by(id_profile=user_profile).first() is None:
-        # No existe perfil en tabla
+    if not profile_exists(post_data['profile']):
         return jsonify({'error': "non existent profile"}), 400
+
+    if user_exists(post_data['email'], post_data['alias']):
+        return jsonify({'error': "user already exists"}), 400
+
+    if user_password_empty(post_data['password']):
+        return jsonify({'error': "password is empty"}), 400
+
+    password = hashlib.md5(post_data['password'].encode()).hexdigest()
 
     user = Users(name=post_data['name'], email=post_data['email'],
                  national_id=post_data['national_id'], national_id_type=post_data['national_id_type'],
-                 alias=post_data['alias'], password=post_data['password'])
+                 alias=post_data['alias'], password=password)
 
     try:
         # add to the database session
@@ -48,6 +52,22 @@ def register_new_user():
         # commit to persist into the database
         database.db.session.commit()
     except:
-        return jsonify({'error': "user already exist"}), 400
+        return jsonify({'error': "error"}), 400
 
     return jsonify({'id': user.id_user, 'name': user.name, 'alias': user.alias, 'email': user.email}), 200
+
+
+def profile_exists(new_user_profile):
+    return Profile.query.filter_by(id_profile=new_user_profile).first() is not None
+
+
+def user_exists(new_user_mail, new_user_alias):
+    if not Users.query.filter_by(email=new_user_mail).first() is None:
+        return True
+    if not Users.query.filter_by(alias=new_user_alias).first() is None:
+        return True
+    return False
+
+
+def user_password_empty(new_user_password):
+    return new_user_password == ''

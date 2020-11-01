@@ -3,7 +3,7 @@ from profileapp.database import db
 
 class Users(db.Model):
 
-    __tablename__= 'Users'
+    #__tablename__= 'users'
 
     id_user = db.Column(db.Integer, primary_key=True)
     alias = db.Column(db.String(80), unique=True, nullable=False)
@@ -21,7 +21,7 @@ class Users(db.Model):
 
 class Profile(db.Model):
 
-    __tablename__ = 'Profile'
+    #__tablename__ = 'profile'
 
     id_profile = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(50), unique=True, nullable=False)
@@ -32,10 +32,10 @@ class Profile(db.Model):
 
 class ProfileUser(db.Model):
 
-    __tablename__ = 'ProfileUser'
+    #__tablename__ = 'profile_user'
 
-    id_profile = db.Column(db.Integer, db.ForeignKey('Profile.id_profile'), primary_key=True, nullable=False)
-    id_user = db.Column(db.Integer, db.ForeignKey('Users.id_user'), primary_key=True, nullable=False)
+    id_profile = db.Column(db.Integer, db.ForeignKey('profile.id_profile'), primary_key=True, nullable=False)
+    id_user = db.Column(db.Integer, db.ForeignKey('users.id_user'), primary_key=True, nullable=False)
 
     def __repr__(self):
         return f"User Profile: {self.id_user, self.id_profile}"

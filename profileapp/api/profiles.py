@@ -13,12 +13,12 @@ schema_new_user = {
     },
     'required': ['id', 'description']}
 
-bp_profile = Blueprint('profile', __name__, url_prefix='/profile/')
+bp_profiles = Blueprint('profiles', __name__, url_prefix='/profiles/')
 
 
-@bp_profile.route("/add/", methods=['POST'])
+@bp_profiles.route("/add/", methods=['POST'])
 @expects_json(schema_new_user)
-def register_new_user():
+def add_new_profile():
     # @expects_json(schema_new_user)
     # if payload is invalid, request will be aborted with error code 400
     # if payload is valid it is stored in g.data
@@ -35,4 +35,24 @@ def register_new_user():
     except:
         return jsonify({'error': "profile already exist"}), 400
 
-    return jsonify({'id': profile.id_profile, 'descrip': profile.description}), 200
+    return jsonify({'id': profile.id_profile, 'description': profile.description}), 200
+
+
+@bp_profiles.route("/", methods=['GET'])
+def get_all_profiles():
+    # Get all profiles
+    profiles = Profile.query.all()
+    profile_list = []
+    for profile in profiles:
+        profile_object = {
+            'id': profile.id_profile,
+            'description': profile.description
+        }
+        profile_list.append(profile_object)
+    response_object = {
+        'status': 'success',
+        'data': {
+            'profiles': profile_list
+        }
+    }
+    return jsonify(response_object), 200
