@@ -7,7 +7,8 @@ class Users(db.Model):
 
     id_user = db.Column(db.Integer, primary_key=True)
     alias = db.Column(db.String(80), unique=True, nullable=False)
-    name = db.Column(db.String(80), nullable=False)
+    first_name = db.Column(db.String(80), nullable=False)
+    last_name = db.Column(db.String(80), nullable=False)
     national_id = db.Column(db.String(50))
     national_id_type = db.Column(db.String(50))
     email = db.Column(db.String(255), unique=True, nullable=False)
@@ -16,7 +17,7 @@ class Users(db.Model):
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     def __repr__(self):
-        return f"User: {self.name}"
+        return f"User: {self.first_name}"
 
 
 class Profile(db.Model):

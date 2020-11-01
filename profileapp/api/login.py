@@ -39,7 +39,7 @@ def login():
 
     profile_user = ProfileUser.query.filter_by(id_user=user.id_user).first()
 
-    return jsonify({'id': user.id_user, 'name': user.name, 'alias': user.alias, 'email': user.email,
+    return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email,
                     'profile': profile_user.id_profile}), 200
 
 

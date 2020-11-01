@@ -21,7 +21,7 @@ class FlaskTest(unittest.TestCase):
                     content_type='application/json')
 
         tester.post("/register/",
-                    data=json.dumps({'name': 'Gonza', 'email': 'algo@algo.com', 'password': '',
+                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': '',
                                      'national_id': '12345678', 'national_id_type': 'DNI',
                                      'alias': 'gonzalgo', 'profile': 0}),
                     content_type='application/json')
@@ -43,7 +43,7 @@ class FlaskTest(unittest.TestCase):
                                        content_type='application/json')
 
         tester.post("/register/",
-                               data=json.dumps({'name': 'Gonza', 'email': 'algo@algo.com', 'password': '123456789',
+                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': '123456789',
                                                 'national_id': '12345678', 'national_id_type': 'DNI',
                                                 'alias': 'gonzalgo', 'profile': 0}),
                                content_type='application/json')
@@ -78,7 +78,7 @@ class FlaskTest(unittest.TestCase):
                                        content_type='application/json')
 
         tester.post("/register/",
-                               data=json.dumps({'name': 'Gonza', 'email': 'algo@algo.com', 'password': '123456789',
+                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': '123456789',
                                                 'national_id': '12345678', 'national_id_type': 'DNI',
                                                 'alias': 'gonzalgo', 'profile': 0}),
                                content_type='application/json')

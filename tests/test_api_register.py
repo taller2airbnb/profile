@@ -8,7 +8,7 @@ class FlaskTest(unittest.TestCase):
     def test_create_user_insufficient_fields_one(self):
         tester = create_app().test_client(self)
         response = tester.post("/register/",
-                               data=json.dumps({'name': 'Gonza'}),
+                               data=json.dumps({'first_name': 'Gonza'}),
                                content_type='application/json')
         status_code = response.status_code
         self.assertEqual(status_code, 400)
@@ -16,7 +16,7 @@ class FlaskTest(unittest.TestCase):
     def test_create_user_insufficient_fields_multiple(self):
         tester = create_app().test_client(self)
         response = tester.post("/register/",
-                               data=json.dumps({'name': 'Gonza', 'mail': 'algo@algo.com', 'national_id': '12345678',
+                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'mail': 'algo@algo.com', 'national_id': '12345678',
                                                 'national_id_type': 'DNI', 'password': '123456789'}),
                                content_type='application/json')
         status_code = response.status_code
@@ -25,7 +25,7 @@ class FlaskTest(unittest.TestCase):
     def test_create_user_sufficient_fields_non_existent_profile(self):
         tester = create_app().test_client(self)
         response = tester.post("/register/",
-                               data=json.dumps({'name': 'Gonza', 'email': 'algo@algo.com', 'password': '123456789',
+                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': '123456789',
                                                 'national_id': '12345678', 'national_id_type': 'DNI',
                                                 'alias': 'gonzalgo', 'profile': 9}),
                                content_type='application/json')
@@ -42,7 +42,7 @@ class FlaskTest(unittest.TestCase):
                                        content_type='application/json')
 
         response = tester.post("/register/",
-                               data=json.dumps({'name': 'Gonza', 'email': 'algo@algo.com', 'password': '123456789',
+                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': '123456789',
                                                 'national_id': '12345678', 'national_id_type': 'DNI',
                                                 'alias': 'gonzalgo', 'profile': 0}),
                                content_type='application/json')
@@ -62,7 +62,7 @@ class FlaskTest(unittest.TestCase):
                                        content_type='application/json')
 
         response = tester.post("/register/",
-                               data=json.dumps({'name': 'Gonza', 'email': 'algo@algo.com', 'password': '',
+                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': '',
                                                 'national_id': '12345678', 'national_id_type': 'DNI',
                                                 'alias': 'gonzalgo', 'profile': 0}),
                                content_type='application/json')

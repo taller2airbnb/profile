@@ -4,7 +4,7 @@ from profileapp.model import Users, Profile, ProfileUser
 def test__create_invalid_relation_non_existing_profile(app, database):
     with app.app_context():
         id_u = 1
-        new_user = Users(name='Gonza', email='algo@algo.com', password='123456789', national_id='12345678',
+        new_user = Users(first_name='Gonza', last_name='Apellido', email='algo@algo.com', password='123456789', national_id='12345678',
                          national_id_type='DNI', alias='gonzalgo')
         database.session.add(new_user)
         database.session.commit()
@@ -25,7 +25,7 @@ def test__create_invalid_relation_non_existing_user(app, database):
     with app.app_context():
         id_u = 1
 
-        new_user = Users(name='Gonza', email='algo@algo.com', password='123456789', national_id='12345678',
+        new_user = Users(first_name='Gonza', last_name='Apellido', email='algo@algo.com', password='123456789', national_id='12345678',
                          national_id_type='DNI', alias='gonzalgo')
         database.session.add(new_user)
         database.session.commit()

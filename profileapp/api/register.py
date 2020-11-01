@@ -9,7 +9,8 @@ from flask_expects_json import expects_json
 schema_new_user = {
     'type': 'object',
     'properties': {
-        'name': {'type': 'string'},
+        'first_name': {'type': 'string'},
+        'last_name': {'type': 'string'},
         'email': {'type': 'string'},
         'national_id': {'type': 'string'},
         'national_id_type': {'type': 'string'},
@@ -17,7 +18,7 @@ schema_new_user = {
         'password': {'type': 'string'},
         'profile': {'type': 'integer'}
     },
-    'required': ['name', 'email', 'national_id', 'national_id_type', 'alias', 'password', 'profile']}
+    'required': ['first_name', 'last_name', 'email', 'national_id', 'national_id_type', 'alias', 'password', 'profile']}
 
 bp_register = Blueprint('register', __name__, url_prefix='/register/')
 
@@ -41,7 +42,7 @@ def register_new_user():
 
     password = hashlib.md5(post_data['password'].encode()).hexdigest()
 
-    user = Users(name=post_data['name'], email=post_data['email'],
+    user = Users(first_name=post_data['first_name'], last_name=post_data['last_name'], email=post_data['email'],
                  national_id=post_data['national_id'], national_id_type=post_data['national_id_type'],
                  alias=post_data['alias'], password=password)
 
@@ -66,7 +67,7 @@ def register_new_user():
     except:
         return jsonify({'error': "error"}), 400
 
-    return jsonify({'id': user.id_user, 'name': user.name, 'alias': user.alias, 'email': user.email}), 200
+    return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email}), 200
 
 
 def profile_exists(new_user_profile):
