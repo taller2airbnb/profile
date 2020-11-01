@@ -10,6 +10,7 @@ from profileapp.api.home_info import bp_homeinfo
 from profileapp.api.register import bp_register
 from profileapp.api.profiles import bp_profiles
 from profileapp.api.login import bp_login
+from profileapp.api.change_password import bp_change_password
 
 
 def create_app():
@@ -28,6 +29,7 @@ def create_app():
     CORS(bp_register)
     CORS(bp_profiles)
     CORS(bp_login)
+    CORS(bp_change_password)
 
     # event.listen(Profile.__table__, 'after_create', DDL(""" INSERT INTO profile (id_profile, description) VALUES (
     # 0, 'admin'), (1, 'anfitrion'), (2, 'huesped') """))
@@ -40,5 +42,6 @@ def create_app():
     app.register_blueprint(bp_register)
     app.register_blueprint(bp_profiles)
     app.register_blueprint(bp_login)
+    app.register_blueprint(bp_change_password)
 
     return app

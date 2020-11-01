@@ -1,4 +1,5 @@
 from profileapp.model import Users
+import hashlib
 
 
 def test__try_create_invalid_user_error(app, database):
@@ -46,4 +47,26 @@ def test__try_duplicate_alias_error(app, database):
             database.session.remove()
         user = Users.query.first()
         assert user.email == email
+
+
+def test__change_password(app, database):
+    with app.app_context():
+
+        password1 = '123456789'
+        password2 = '123123'
+        email = 'hola@asd.com'
+
+        new_user = Users(first_name='Gonza', last_name='Apellido', email=email, password=password1,
+                         national_id='12345678',
+                         national_id_type='DNI', alias='gonzalgo')
+        database.session.add(new_user)
+        database.session.commit()
+
+        user = Users.query.filter_by(email=email).first()
+
+        user.password = password2
+        database.session.commit()
+
+        assert user.password == password2
+
 
