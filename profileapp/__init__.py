@@ -25,6 +25,9 @@ def create_app():
     commands.init_app(app)
 
     CORS(bp_homeinfo)  # enable CORS on the bp_stinfo blue print
+    CORS(bp_register)
+    CORS(bp_profiles)
+    CORS(bp_login)
 
     # event.listen(Profile.__table__, 'after_create', DDL(""" INSERT INTO profile (id_profile, description) VALUES (
     # 0, 'admin'), (1, 'anfitrion'), (2, 'huesped') """))
