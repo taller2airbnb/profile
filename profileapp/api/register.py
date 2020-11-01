@@ -1,5 +1,5 @@
 from profileapp import database
-from profileapp.model import Users, Profile
+from profileapp.model import Users, Profile, ProfileUser
 from flask import request
 from flask import Blueprint
 from flask import jsonify
@@ -48,6 +48,18 @@ def register_new_user():
     try:
         # add to the database session
         database.db.session.add(user)
+
+        # commit to persist into the database
+        database.db.session.commit()
+    except:
+        return jsonify({'error': "error"}), 400
+
+    user_created = Users.query.filter_by(email=post_data['email']).first()
+    profile_user = ProfileUser(id_user=user_created.id_user,id_profile=post_data['profile'])
+
+    try:
+        # add to the database session
+        database.db.session.add(profile_user)
 
         # commit to persist into the database
         database.db.session.commit()

@@ -1,5 +1,5 @@
 from profileapp import database
-from profileapp.model import Users, Profile
+from profileapp.model import Users, ProfileUser
 from flask import request
 from flask import Blueprint
 from flask import jsonify
@@ -37,7 +37,10 @@ def login():
     if not correct_password(post_data['password'], user.password):
         return jsonify({'error': "login failed"}), 400
 
-    return jsonify({'id': user.id_user, 'name': user.name, 'alias': user.alias, 'email': user.email}), 200
+    profile_user = ProfileUser.query.filter_by(id_user=user.id_user).first()
+
+    return jsonify({'id': user.id_user, 'name': user.name, 'alias': user.alias, 'email': user.email,
+                    'profile': profile_user.id_profile}), 200
 
 
 def user_exists(new_user_mail):
