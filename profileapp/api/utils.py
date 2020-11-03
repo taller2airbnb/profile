@@ -27,5 +27,5 @@ def correct_password(password_login, user_password):
 
 
 def profile_is_admin(new_user_profile):
-    profile_description = Profile.query.filter_by(id_profile=0).first().description
+    profile_description = Profile.query.filter_by(id_profile=new_user_profile).first().description
     return 'admin' in profile_description.lower()

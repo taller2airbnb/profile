@@ -8,6 +8,7 @@ from flask import Flask
 from flask_cors import CORS
 from profileapp.api.home_info import bp_homeinfo
 from profileapp.api.register import bp_register
+from profileapp.api.register_admin import bp_register_admin
 from profileapp.api.profiles import bp_profiles
 from profileapp.api.login import bp_login
 from profileapp.api.change_password import bp_change_password
@@ -27,6 +28,7 @@ def create_app():
 
     CORS(bp_homeinfo)  # enable CORS on the bp_stinfo blue print
     CORS(bp_register)
+    CORS(bp_register_admin)
     CORS(bp_profiles)
     CORS(bp_login)
     CORS(bp_change_password)
@@ -40,6 +42,7 @@ def create_app():
 
     app.register_blueprint(bp_homeinfo)
     app.register_blueprint(bp_register)
+    app.register_blueprint(bp_register_admin)
     app.register_blueprint(bp_profiles)
     app.register_blueprint(bp_login)
     app.register_blueprint(bp_change_password)

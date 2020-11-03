@@ -34,7 +34,24 @@ class FlaskTest(unittest.TestCase):
         self.assertEqual(data_back['error'], "non existent profile")
         self.assertEqual(status_code, 400)
 
-    def test_create_user_sufficient_fields_existent_profile(self):
+    def test_create_user_with_empty_password(self):
+        tester = create_app().test_client(self)
+
+        response_profile = tester.post("/profiles/add/",
+                                       data=json.dumps({'id': 0, 'description': 'admin'}),
+                                       content_type='application/json')
+
+        response = tester.post("/register/",
+                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': '',
+                                                'national_id': '12345678', 'national_id_type': 'DNI',
+                                                'alias': 'gonzalgo', 'profile': 0}),
+                               content_type='application/json')
+        status_code = response.status_code
+        data_back = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data_back['error'], "password is empty")
+        self.assertEqual(status_code, 400)
+
+    def test_create_user_successful_sufficient_fields_existent_profile(self):
         tester = create_app().test_client(self)
 
         response_profile = tester.post("/profiles/add/",
@@ -53,20 +70,3 @@ class FlaskTest(unittest.TestCase):
         self.assertEqual(data_back['alias'], "gonzalgo")
         self.assertEqual(data_back['id'], 1)
         self.assertEqual(status_code, 200)
-
-    def test_create_user_with_empty_password(self):
-        tester = create_app().test_client(self)
-
-        response_profile = tester.post("/profiles/add/",
-                                       data=json.dumps({'id': 0, 'description': 'admin'}),
-                                       content_type='application/json')
-
-        response = tester.post("/register/",
-                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': '',
-                                                'national_id': '12345678', 'national_id_type': 'DNI',
-                                                'alias': 'gonzalgo', 'profile': 0}),
-                               content_type='application/json')
-        status_code = response.status_code
-        data_back = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data_back['error'], "password is empty")
-        self.assertEqual(status_code, 400)
