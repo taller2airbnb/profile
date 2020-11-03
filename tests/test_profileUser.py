@@ -20,7 +20,6 @@ def test__create_invalid_relation_non_existing_profile(app, database):
         profile_user = ProfileUser.query.first()
         assert profile_user is None
 
-
 def test__create_invalid_relation_non_existing_user(app, database):
     with app.app_context():
         id_u = 1

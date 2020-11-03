@@ -3,8 +3,8 @@ from profileapp.model import Users, ProfileUser
 from flask import request
 from flask import Blueprint
 from flask import jsonify
-import hashlib
 from flask_expects_json import expects_json
+from profileapp.api.utils import user_password_empty, user_exists, correct_password
 
 schema_new_user = {
     'type': 'object',
@@ -41,18 +41,3 @@ def login():
 
     return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email,
                     'profile': profile_user.id_profile}), 200
-
-
-def user_exists(new_user_mail):
-    if not Users.query.filter_by(email=new_user_mail).first() is None:
-        return True
-    return False
-
-
-def user_password_empty(login_user_password):
-    return login_user_password == ''
-
-
-def correct_password(password_login, user_password):
-    login_password = hashlib.md5(password_login.encode()).hexdigest()
-    return user_password == login_password

@@ -5,6 +5,8 @@ from flask import Blueprint
 from flask import jsonify
 import hashlib
 from flask_expects_json import expects_json
+from profileapp.api.utils import user_password_empty, profile_exists, user_exists
+
 
 schema_new_user = {
     'type': 'object',
@@ -68,19 +70,3 @@ def register_new_user():
         return jsonify({'error': "error"}), 400
 
     return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email}), 200
-
-
-def profile_exists(new_user_profile):
-    return Profile.query.filter_by(id_profile=new_user_profile).first() is not None
-
-
-def user_exists(new_user_mail, new_user_alias):
-    if not Users.query.filter_by(email=new_user_mail).first() is None:
-        return True
-    if not Users.query.filter_by(alias=new_user_alias).first() is None:
-        return True
-    return False
-
-
-def user_password_empty(new_user_password):
-    return new_user_password == ''

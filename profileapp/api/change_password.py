@@ -5,6 +5,7 @@ from flask import Blueprint
 from flask import jsonify
 import hashlib
 from flask_expects_json import expects_json
+from profileapp.api.utils import user_password_empty, user_exists
 
 schema_change_pass = {
     'type': 'object',
@@ -45,13 +46,3 @@ def change_password():
         return jsonify({'error': "error"}), 400
 
     return jsonify({'email': user.email, 'change_pass': 'OK'}), 200
-
-
-def user_password_empty(new_user_password):
-    return new_user_password == ''
-
-
-def user_exists(new_user_mail):
-    if not Users.query.filter_by(email=new_user_mail).first() is None:
-        return True
-    return False
