@@ -13,7 +13,7 @@ class FlaskTest(unittest.TestCase):
         status_code = response.status_code
         self.assertEqual(status_code, 400)
 
-    def test_login_user_with_empty_password(self):
+    def test_login_valid_user_fails_login_with_empty_password(self):
         tester = create_app().test_client(self)
 
         tester.post("/profiles/add/",
@@ -21,8 +21,8 @@ class FlaskTest(unittest.TestCase):
                     content_type='application/json')
 
         tester.post("/register/",
-                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': '',
-                                     'national_id': '12345678', 'national_id_type': 'DNI',
+                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com',
+                                     'password': '', 'national_id': '12345678', 'national_id_type': 'DNI',
                                      'alias': 'gonzalgo', 'profile': 0}),
                     content_type='application/json')
 
@@ -35,7 +35,7 @@ class FlaskTest(unittest.TestCase):
         self.assertEqual(data_back['error'], "password is empty")
         self.assertEqual(status_code, 400)
 
-    def test_login_successful(self):
+    def test_valid_user_login_successful(self):
         tester = create_app().test_client(self)
 
         response_profile = tester.post("/profiles/add/",
@@ -43,14 +43,15 @@ class FlaskTest(unittest.TestCase):
                                        content_type='application/json')
 
         tester.post("/register/",
-                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': '123456789',
-                                                'national_id': '12345678', 'national_id_type': 'DNI',
-                                                'alias': 'gonzalgo', 'profile': 0}),
-                               content_type='application/json')
+                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com',
+                                    'password': '123456789', 'national_id': '12345678', 'national_id_type': 'DNI',
+                                     'alias': 'gonzalgo', 'profile': 0}),
+                    content_type='application/json')
 
         response = tester.post("/login/",
                                data=json.dumps({'email': 'algo@algo.com', 'password': '123456789'}),
                                content_type='application/json')
+
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['name'], "Gonza")
@@ -78,14 +79,15 @@ class FlaskTest(unittest.TestCase):
                                        content_type='application/json')
 
         tester.post("/register/",
-                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': '123456789',
-                                                'national_id': '12345678', 'national_id_type': 'DNI',
-                                                'alias': 'gonzalgo', 'profile': 0}),
-                               content_type='application/json')
+                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com',
+                                     'password': '123456789', 'national_id': '12345678', 'national_id_type': 'DNI',
+                                     'alias': 'gonzalgo', 'profile': 0}),
+                    content_type='application/json')
 
         response = tester.post("/login/",
                                data=json.dumps({'email': 'algo@algo.com', 'password': 'otropassword'}),
                                content_type='application/json')
+
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['error'], "login failed")

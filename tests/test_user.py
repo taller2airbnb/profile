@@ -1,5 +1,4 @@
 from profileapp.model import Users
-import hashlib
 
 
 def test__try_create_invalid_user_error(app, database):
@@ -32,13 +31,13 @@ def test__try_duplicate_alias_error(app, database):
 
         email = 'algo@algo.com'
 
-        new_user = Users(first_name='Gonza', last_name='Apellido', email=email, password='123456789', national_id='12345678',
-                         national_id_type='DNI', alias='gonzalgo')
+        new_user = Users(first_name='Gonza', last_name='Apellido', email=email, password='123456789',
+                         national_id='12345678', national_id_type='DNI', alias='gonzalgo')
         database.session.add(new_user)
         database.session.commit()
 
-        user2 = Users(first_name='otroNombre', last_name='Apellido', email='otroMail@algo.com', password='otropass', national_id='884734829',
-                      national_id_type='DNI', alias='gonzalgo')
+        user2 = Users(first_name='otroNombre', last_name='Apellido', email='otroMail@algo.com', password='otropass',
+                      national_id='884734829', national_id_type='DNI', alias='gonzalgo')
 
         try:
             database.session.add(user2)
@@ -57,8 +56,7 @@ def test__change_password(app, database):
         email = 'hola@asd.com'
 
         new_user = Users(first_name='Gonza', last_name='Apellido', email=email, password=password1,
-                         national_id='12345678',
-                         national_id_type='DNI', alias='gonzalgo')
+                         national_id='12345678', national_id_type='DNI', alias='gonzalgo')
         database.session.add(new_user)
         database.session.commit()
 

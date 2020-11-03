@@ -20,13 +20,15 @@ class FlaskTest(unittest.TestCase):
                                        content_type='application/json')
 
         response_user = tester.post("/register/",
-                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': '123456789',
-                                                'national_id': '12345678', 'national_id_type': 'DNI',
-                                                'alias': 'gonzalgo', 'profile': 0}),
-                               content_type='application/json')
+                                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email':
+                                                    'algo@algo.com', 'password': '123456789', 'national_id': '12345678',
+                                                     'national_id_type': 'DNI', 'alias': 'gonzalgo', 'profile': 0}),
+                                    content_type='application/json')
+
         response_password = tester.post("/change_password/",
-                               data=json.dumps({'validate': 'OK', 'email': 'algo@algo.com', 'new_pass': ''}),
-                               content_type='application/json')
+                                        data=json.dumps({'validate': 'OK', 'email': 'algo@algo.com', 'new_pass': ''}),
+                                        content_type='application/json')
+
         status_code = response_password.status_code
         self.assertEqual(status_code, 400)
 
@@ -49,18 +51,19 @@ class FlaskTest(unittest.TestCase):
                                        content_type='application/json')
 
         response_user = tester.post("/register/",
-                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': old_pass,
-                                                'national_id': '12345678', 'national_id_type': 'DNI',
-                                                'alias': 'gonzalgo', 'profile': 0}),
-                               content_type='application/json')
+                                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email':
+                                                    'algo@algo.com', 'password': old_pass, 'national_id': '12345678',
+                                                     'national_id_type': 'DNI', 'alias': 'gonzalgo', 'profile': 0}),
+                                    content_type='application/json')
 
         response_password = tester.post("/change_password/",
-                               data=json.dumps({'validate': 'OK', 'email': 'algo@algo.com', 'new_pass': new_pass}),
-                               content_type='application/json')
+                                        data=json.dumps({'validate': 'OK', 'email': 'algo@algo.com',
+                                                         'new_pass': new_pass}),
+                                        content_type='application/json')
 
         response_login = tester.post("/login/",
-                               data=json.dumps({'email': 'algo@algo.com', 'password': old_pass}),
-                               content_type='application/json')
+                                     data=json.dumps({'email': 'algo@algo.com', 'password': old_pass}),
+                                     content_type='application/json')
 
         status_code = response_password.status_code
         self.assertEqual(status_code, 200)
@@ -82,18 +85,18 @@ class FlaskTest(unittest.TestCase):
                                        content_type='application/json')
 
         response_user = tester.post("/register/",
-                               data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com', 'password': old_pass,
-                                                'national_id': '12345678', 'national_id_type': 'DNI',
-                                                'alias': 'gonzalgo', 'profile': 0}),
-                               content_type='application/json')
+                                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email':
+                                                     'algo@algo.com', 'password': old_pass, 'national_id': '12345678',
+                                                     'national_id_type': 'DNI', 'alias': 'gonzalgo', 'profile': 0}),
+                                    content_type='application/json')
 
         response_password = tester.post("/change_password/",
-                               data=json.dumps({'validate': 'OK', 'email': 'algo@algo.com', 'new_pass': new_pass}),
-                               content_type='application/json')
+                                        data=json.dumps({'validate': 'OK', 'email': 'algo@algo.com', 'new_pass': new_pass}),
+                                        content_type='application/json')
 
         response_login = tester.post("/login/",
-                               data=json.dumps({'email': 'algo@algo.com', 'password': new_pass}),
-                               content_type='application/json')
+                                     data=json.dumps({'email': 'algo@algo.com', 'password': new_pass}),
+                                     content_type='application/json')
 
         status_code = response_password.status_code
         self.assertEqual(status_code, 200)
