@@ -12,6 +12,7 @@ from profileapp.api.register_admin import bp_register_admin
 from profileapp.api.profiles import bp_profiles
 from profileapp.api.login import bp_login
 from profileapp.api.change_password import bp_change_password
+from flasgger import Swagger
 
 
 def create_app():
@@ -46,5 +47,8 @@ def create_app():
     app.register_blueprint(bp_profiles)
     app.register_blueprint(bp_login)
     app.register_blueprint(bp_change_password)
+
+    # setup swagger
+    swagger = Swagger(app)
 
     return app

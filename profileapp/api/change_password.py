@@ -6,6 +6,7 @@ from flask import jsonify
 import hashlib
 from flask_expects_json import expects_json
 from profileapp.api.utils import user_password_empty, user_exists
+from flasgger.utils import swag_from
 
 schema_change_pass = {
     'type': 'object',
@@ -20,8 +21,45 @@ bp_change_password = Blueprint('change_password', __name__, url_prefix='/change_
 
 
 @bp_change_password.route("/", methods=['POST'])
+@swag_from(methods=['POST'])
 @expects_json(schema_change_pass)
 def change_password():
+    """
+    Change Password
+    Existent user is needed
+    ---
+    tags:
+      - change-password
+    consumes:
+      - application/json
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+            required:
+              - validate
+              - email
+              - password
+            properties:
+              validate:
+                type: string
+                description: Must Be "OK"
+              email:
+                type: string
+                description: Unique identifier representing a existent user
+              password:
+                type: string
+                description: password of the user
+    responses:
+      200:
+        description: A successful profile creation
+        schema:
+          properties:
+              email:
+                type: string
+                description: Unique email of the created user
+    """
     post_data = request.get_json()
 
     if post_data['validate'] != 'OK':

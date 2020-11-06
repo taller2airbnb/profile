@@ -6,6 +6,7 @@ from flask import jsonify
 import hashlib
 from flask_expects_json import expects_json
 from profileapp.api.utils import user_password_empty, profile_exists, user_exists
+from flasgger.utils import swag_from
 
 
 schema_new_user = {
@@ -26,8 +27,74 @@ bp_register = Blueprint('register', __name__, url_prefix='/register/')
 
 
 @bp_register.route("/", methods=['POST'])
+@swag_from(methods=['POST'])
 @expects_json(schema_new_user)
 def register_new_user():
+    """
+    Register a new user
+    The new user has to fulfill all the required fields
+    ---
+    tags:
+      - registration
+    consumes:
+      - application/json
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+            required:
+              - first_name
+              - last_name
+              - email
+              - national_id
+              - national_id_type
+              - alias
+              - password
+              - profile
+            properties:
+              first_name:
+                type: string
+                description: First name of the new user
+              last_name:
+                type: string
+                description: Last name of the new user
+              email:
+                type: string
+                description: Unique email representing the new user
+              national_id:
+                type: string
+                description: National ID of the new user
+              national_id_type:
+                type: string
+                description: National ID Type of the new user
+              alias:
+                type: string
+                description: Unique alias representing the new user
+              password:
+                type: string
+                description: Password of the new user
+              profile:
+                type: integer
+                description: Profile of the new user, has to be an existing one (check /profiles/)
+    responses:
+      200:
+        description: A successful profile creation
+        schema:
+          properties:
+              email:
+                type: string
+                description: Unique email of the created user
+              alias:
+                type: string
+                description: Unique alias of the created user
+              id:
+                type: integer
+                description: Unique identifier of the created user
+              name:
+                type: string
+                description: Name of the created user
+    """
     # @expects_json(schema_new_user)
     # if payload is invalid, request will be aborted with error code 400
     # if payload is valid it is stored in g.data

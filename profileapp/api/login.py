@@ -5,6 +5,7 @@ from flask import Blueprint
 from flask import jsonify
 from flask_expects_json import expects_json
 from profileapp.api.utils import user_password_empty, user_exists, correct_password
+from flasgger.utils import swag_from
 
 schema_new_user = {
     'type': 'object',
@@ -19,8 +20,53 @@ bp_login = Blueprint('login', __name__, url_prefix='/login/')
 
 
 @bp_login.route("/", methods=['POST'])
+@swag_from(methods=['POST'])
 @expects_json(schema_new_user)
 def login():
+    """
+    Login
+    Existent user is needed
+    ---
+    tags:
+      - login
+    consumes:
+      - application/json
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+                description: Unique identifier representing a existent user
+              password:
+                type: string
+                description: password of the user
+    responses:
+      200:
+        description: A successful profile creation
+        schema:
+          properties:
+              email:
+                type: string
+                description: Unique email of the created user
+              alias:
+                type: string
+                description: Unique alias of the created user
+              id:
+                type: integer
+                description: Unique identifier of the created user
+              profile_id:
+                type: integer
+                description: Unique identifier of the profile created user
+              name:
+                type: string
+                description: Name of the created user
+    """
     # @expects_json(schema_new_user)
     # if payload is invalid, request will be aborted with error code 400
     # if payload is valid it is stored in g.data
