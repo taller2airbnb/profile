@@ -1,36 +1,46 @@
-from profileapp import database
-from profileapp.model import Users
 import requests
 from flask import Blueprint
 from flask import jsonify, render_template
+from flasgger.utils import swag_from
 
 bp_homeinfo = Blueprint('status_info', __name__, url_prefix='/')
 
 
-@bp_homeinfo.route("/")
+@bp_homeinfo.route("/", methods=['GET'])
+@swag_from(methods=['GET'])
 def home():
+
     return render_template("home.html")
 
 
 @bp_homeinfo.route("/business-status")
+@swag_from(methods=['GET'])
 def business():
+    """
+    BusinessCore Health Check
+    To Know if the BusinessCore Service is UP and running.
+    ---
+    tags:
+      - health
+    responses:
+      200:
+        description: Status
+    """
     response = requests.get('https://taller2airbnb-businesscore.herokuapp.com/health')
     return response.json()
 
 
-@bp_homeinfo.route("/health")
+@bp_homeinfo.route("/health", methods=['GET'])
+@swag_from(methods=['GET'])
 def health():
+    """
+    Health Check
+    To Know if the APP is UP and running.
+    ---
+    tags:
+      - health
+    responses:
+      200:
+        description: Status
+    """
     return jsonify({"status": "UP", "from": "Profile"}), 200
-
-
-@bp_homeinfo.route("/add/<string:item>", methods=['POST'])
-def add_new_item(item):
-    model = Users(name=item)
-
-    # add to the database session
-    database.db.session.add(model)
-
-    # commit to persist into the database
-    database.db.session.commit()
-
-    return jsonify({"success": model.name})
