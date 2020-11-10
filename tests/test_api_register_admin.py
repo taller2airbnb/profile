@@ -1,6 +1,6 @@
-import json
 from profileapp import create_app
 import unittest
+from tests import *
 
 
 class FlaskTest(unittest.TestCase):
@@ -9,23 +9,19 @@ class FlaskTest(unittest.TestCase):
         tester = create_app().test_client(self)
 
         response_profile = tester.post("/profiles/add/",
-                                       data=json.dumps({'id': 0, 'description': 'admin'}),
+                                       data=VALID_PROFILE_ADMIN,
                                        content_type='application/json')
 
         response_register = tester.post("/register/",
-                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com',
-                                    'password': '123456789', 'national_id': '12345678', 'national_id_type': 'DNI',
-                                     'alias': 'gonzalgo', 'profile': 0}),
-                    content_type='application/json')
+                                        data=VALID_USER1_REGISTER,
+                                        content_type='application/json')
 
         response_login = tester.post("/login/",
-                               data=json.dumps({'email': 'algo@algo.com', 'password': '123456789'}),
-                               content_type='application/json')
+                                     data=VALID_USER1_LOGIN,
+                                     content_type='application/json')
 
         response = tester.post("/register_admin/",
-                               data=json.dumps({'first_name': 'Admin', 'last_name': 'Istrador', 'email': 'admin@algo.com',
-                                                'password': '123456789', 'national_id': '12345678', 'national_id_type': 'DNI',
-                                                'alias': 'administrador', 'user_logged_id': 1}),
+                               data=VALID_USER2_REGISTER_ADMIN,
                                content_type='application/json')
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))

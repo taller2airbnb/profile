@@ -1,7 +1,7 @@
 from flask import request, Blueprint, jsonify
 from flask_expects_json import expects_json
 from profileapp.api.register import register_new_user
-from profileapp.api.utils import profile_exists, profile_is_admin, validate_user_is_admin
+from profileapp.api.utils import validate_user_is_admin, get_id_profile_from_description
 from flasgger.utils import swag_from
 from profileapp.Errors.ProfileAppException import ProfileAppException
 
@@ -98,7 +98,7 @@ def register_new_admin():
     post_data = request.get_json()
     try:
         validate_user_is_admin(post_data['user_logged_id'])
-        post_data['profile'] = 0
+        post_data['profile'] = get_id_profile_from_description('admin')
     except ProfileAppException as e:
         return jsonify({'Error': e.message}), 400
     return register_new_user()

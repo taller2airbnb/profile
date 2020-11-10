@@ -1,8 +1,7 @@
 from profileapp.model import Users, Profile, ProfileUser
 import hashlib
 from profileapp.database import db
-from profileapp.Errors import UsersError
-
+from profileapp.Errors import UsersError, ProfileError
 # common functions used by  the other blueprints
 
 
@@ -43,6 +42,13 @@ def validate_user_id_exists(user_id):
 def get_profile_from_user_id(user_id):
     validate_user_id_exists(user_id)
     return ProfileUser.query.filter_by(id_user=user_id).first().id_profile
+
+
+def get_id_profile_from_description(profile_description):
+    id_profile = Profile.query.filter_by(description=profile_description).first().id_profile
+    if id_profile is None:
+        raise ProfileError.ProfileNotExistentByDescription(profile_description)
+    return id_profile
 
 
 def validate_user_is_admin(user_id):
