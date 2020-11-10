@@ -1,6 +1,4 @@
-from sqlalchemy import event, DDL
-from profileapp.model import Profile
-
+import profileapp.model
 import profileapp.database
 import profileapp.commands
 import os
@@ -34,12 +32,10 @@ def create_app():
     CORS(bp_login)
     CORS(bp_change_password)
 
-    # event.listen(Profile.__table__, 'after_create', DDL(""" INSERT INTO profile (id_profile, description) VALUES (
-    # 0, 'admin'), (1, 'anfitrion'), (2, 'huesped') """))
-
     @app.before_first_request
     def create_db():
         database.create_tables()
+        model.insert_initial_values()
 
     app.register_blueprint(bp_homeinfo)
     app.register_blueprint(bp_register)

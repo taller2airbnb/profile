@@ -1,5 +1,7 @@
 from profileapp.model import Users, Profile, ProfileUser
 import hashlib
+from profileapp.database import db
+from profileapp.Errors import UsersError
 
 # common functions used by  the other blueprints
 
@@ -29,3 +31,20 @@ def correct_password(password_login, user_password):
 def profile_is_admin(new_user_profile):
     profile_description = Profile.query.filter_by(id_profile=new_user_profile).first().description
     return 'admin' in profile_description.lower()
+
+
+def validate_user_id_exists(user_id):
+    exists = db.session.query(db.exists().where(Users.id_user == user_id)).scalar()
+    if not exists:
+        raise UsersError.UserNotExistentError(user_id)
+    return exists
+
+
+def get_profile_from_user_id(user_id):
+    validate_user_id_exists(user_id)
+    return ProfileUser.query.filter_by(id_user=user_id).first().id_profile
+
+
+def validate_user_is_admin(user_id):
+    if not (profile_is_admin(get_profile_from_user_id(user_id))):
+        raise UsersError.UserIsNotAnAdminError(user_id)
