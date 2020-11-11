@@ -2,15 +2,22 @@ from profileapp.model import Users, Profile, ProfileUser
 import hashlib
 from profileapp.database import db
 from profileapp.Errors import UsersError, ProfileError
-# common functions used by  the other blueprints
 
 
 def user_password_empty(new_user_password):
     return new_user_password == ''
 
 
-def profile_exists(new_user_profile):
-    return Profile.query.filter_by(id_profile=new_user_profile).first() is not None
+def validate_user_password(user_password):
+    if user_password == '':
+        raise UsersError.UserPasswordMustNotBeEmpty()
+
+
+def validate_existent_profile_id(profile_id):
+    if Profile.query.filter_by(id_profile=profile_id).first() is not None:
+        return True
+    else:
+        raise ProfileError.ProfileNotExistentById(profile_id)
 
 
 def user_exists(new_user_mail, new_user_alias=None):
@@ -20,6 +27,13 @@ def user_exists(new_user_mail, new_user_alias=None):
         if not Users.query.filter_by(alias=new_user_alias).first() is None:
             return True
     return False
+
+
+def validate_free_user_identifiers(new_user_mail, new_user_alias):
+    mail_taken = Users.query.filter_by(email=new_user_mail).first() is not None
+    alias_taken = Users.query.filter_by(alias=new_user_alias).first() is not None
+    if mail_taken or alias_taken:
+        raise UsersError.UserIdentifierAlreadyTaken(new_user_mail + " or " + new_user_alias)
 
 
 def correct_password(password_login, user_password):

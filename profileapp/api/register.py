@@ -5,9 +5,10 @@ from flask import Blueprint
 from flask import jsonify
 import hashlib
 from flask_expects_json import expects_json
-from profileapp.api.utils import user_password_empty, profile_exists, user_exists
+from profileapp.api.utils import user_password_empty, validate_existent_profile_id, user_exists, \
+    validate_free_user_identifiers, validate_user_password
 from flasgger.utils import swag_from
-
+from profileapp.Errors.ProfileAppException import ProfileAppException
 
 schema_new_user = {
     'type': 'object',
@@ -99,15 +100,12 @@ def register_new_user():
     # if payload is invalid, request will be aborted with error code 400
     # if payload is valid it is stored in g.data
     post_data = request.get_json()
-
-    if not profile_exists(post_data['profile']):
-        return jsonify({'error': "non existent profile"}), 400
-
-    if user_exists(post_data['email'], post_data['alias']):
-        return jsonify({'error': "user already exists"}), 400
-
-    if user_password_empty(post_data['password']):
-        return jsonify({'error': "password is empty"}), 400
+    try:
+        validate_existent_profile_id(post_data['profile'])
+        validate_free_user_identifiers(post_data['email'], post_data['alias'])
+        validate_user_password(post_data['password'])
+    except ProfileAppException as e:
+        return jsonify({'Error': e.message}), 400
 
     password = hashlib.md5(post_data['password'].encode()).hexdigest()
 
@@ -122,10 +120,10 @@ def register_new_user():
         # commit to persist into the database
         database.db.session.commit()
     except:
-        return jsonify({'error': "error"}), 400
+        return jsonify({'Error': "Something happened creating the User in the Database"}), 400
 
     user_created = Users.query.filter_by(email=post_data['email']).first()
-    profile_user = ProfileUser(id_user=user_created.id_user,id_profile=post_data['profile'])
+    profile_user = ProfileUser(id_user=user_created.id_user, id_profile=post_data['profile'])
 
     try:
         # add to the database session
@@ -134,6 +132,6 @@ def register_new_user():
         # commit to persist into the database
         database.db.session.commit()
     except:
-        return jsonify({'error': "error"}), 400
+        return jsonify({'error': "Something happened creating the Profile-User relation in the Database"}), 400
 
     return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email}), 200

@@ -11,3 +11,15 @@ class UserIsNotAnAdminError(ProfileAppException):
     def __init__(self, user_info):
         self.message = "The User: " + str(user_info) + " is not an admin"
         super().__init__(self.message)
+
+
+class UserIdentifierAlreadyTaken(ProfileAppException):
+    def __init__(self, user_info):
+        self.message = "Some User identifier is already taken: " + str(user_info)
+        super().__init__(self.message)
+
+
+class UserPasswordMustNotBeEmpty(ProfileAppException):
+    def __init__(self):
+        self.message = "User Password must not be empty"
+        super().__init__(self.message)
