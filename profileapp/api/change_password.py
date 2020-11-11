@@ -5,7 +5,6 @@ from flask import Blueprint
 from flask import jsonify
 import hashlib
 from flask_expects_json import expects_json
-from profileapp.api.utils import user_password_empty, user_exists
 from flasgger.utils import swag_from
 from profileapp.api.utils import validate_user_password, validate_existent_user_by_mail
 from profileapp.Errors.ProfileAppException import ProfileAppException
