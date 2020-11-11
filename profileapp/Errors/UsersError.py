@@ -9,5 +9,5 @@ class UserNotExistentError(ProfileAppException):
 
 class UserIsNotAnAdminError(ProfileAppException):
     def __init__(self, user_info):
-        self.message = "The user: " + str(user_info) + "is not an admin"
+        self.message = "The User: " + str(user_info) + " is not an admin"
         super().__init__(self.message)
