@@ -51,7 +51,10 @@ def insert_initial_values():
         db.session.add(Profile(id_profile=2, description='huesped'))
         db.session.commit()
         # User
-        password = hashlib.md5(os.environ.get('ADM_PASS').encode()).hexdigest()
+        password = os.environ.get('ADM_PASS')
+        if password is None:
+            password = 'test'
+        password = hashlib.md5(password.encode()).hexdigest()
         db.session.add(Users(first_name='norbert', last_name='degoas', email='buenosaires@elcondor.mardelplata',
                              password=password, national_id='99999999', national_id_type='DNI',
                              alias='norbertdegoas'))
