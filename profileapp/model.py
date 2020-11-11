@@ -1,3 +1,6 @@
+import hashlib
+import os
+
 from flask import current_app
 from profileapp.database import db
 
@@ -48,8 +51,9 @@ def insert_initial_values():
         db.session.add(Profile(id_profile=2, description='huesped'))
         db.session.commit()
         # User
+        password = hashlib.md5(os.environ.get('ADM_PASS').encode()).hexdigest()
         db.session.add(Users(first_name='norbert', last_name='degoas', email='buenosaires@elcondor.mardelplata',
-                             password='necochea', national_id='99999999', national_id_type='DNI',
+                             password=password, national_id='99999999', national_id_type='DNI',
                              alias='norbertdegoas'))
         db.session.commit()
         # Profile User
