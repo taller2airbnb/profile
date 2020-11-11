@@ -1,5 +1,4 @@
 import pytest
-import os
 from profileapp import create_app
 from profileapp.database import db
 

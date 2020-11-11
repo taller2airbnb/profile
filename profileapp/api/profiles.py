@@ -70,7 +70,7 @@ def add_new_profile():
         # commit to persist into the database
         database.db.session.commit()
     except:
-        return jsonify({'error': "profile already exist"}), 400
+        return jsonify({'Error': "profile already exist"}), 400
 
     return jsonify({'id': profile.id_profile, 'description': profile.description}), 200
 

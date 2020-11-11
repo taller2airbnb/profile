@@ -5,8 +5,9 @@ from flask import Blueprint
 from flask import jsonify
 import hashlib
 from flask_expects_json import expects_json
-from profileapp.api.utils import user_password_empty, user_exists
 from flasgger.utils import swag_from
+from profileapp.api.utils import validate_user_password, validate_existent_user_by_mail
+from profileapp.Errors.ProfileAppException import ProfileAppException
 
 schema_change_pass = {
     'type': 'object',
@@ -65,11 +66,11 @@ def change_password():
     if post_data['validate'] != 'OK':
         return jsonify({'error': "change password request not valid"}), 400
 
-    if user_password_empty(post_data['new_pass']):
-        return jsonify({'error': "password is empty"}), 400
-
-    if not user_exists(post_data['email']):
-        return jsonify({'error': "user not existent"}), 400
+    try:
+        validate_existent_user_by_mail(post_data['email'])
+        validate_user_password(post_data['new_pass'])
+    except ProfileAppException as e:
+        return jsonify({'Error': e.message}), 400
 
     new_password = hashlib.md5(post_data['new_pass'].encode()).hexdigest()
     user = Users.query.filter_by(email=post_data['email']).first()
@@ -81,6 +82,6 @@ def change_password():
         # commit to persist into the database
         database.db.session.commit()
     except:
-        return jsonify({'error': "error"}), 400
+        return jsonify({'Error': "Something happened changing the Password in the Database"}), 400
 
     return jsonify({'email': user.email, 'change_pass': 'OK'}), 200

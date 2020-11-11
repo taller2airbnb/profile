@@ -26,6 +26,7 @@ class DevelopmentInDockerConfig(Config):
 
 class TestingWithoutDBConfig(Config):
     ENV = "development"
+    TESTING = True
     DEBUG = True
     START_DB = False
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/postgres'
@@ -33,6 +34,7 @@ class TestingWithoutDBConfig(Config):
 
 class TestingWithDBConfig(Config):
     ENV = "development"
+    TESTING = True
     DEBUG = True
     START_DB = True
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/postgres'
