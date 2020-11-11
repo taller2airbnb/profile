@@ -3,7 +3,7 @@ from flask import request
 from flask import Blueprint
 from flask import jsonify
 from flask_expects_json import expects_json
-from profileapp.api.utils import user_exists, correct_password, validate_user_password, validate_existent_user_by_mail
+from profileapp.api.utils import validate_user_password, validate_existent_user_by_mail
 from flasgger.utils import swag_from
 from profileapp.Errors.ProfileAppException import ProfileAppException
 
