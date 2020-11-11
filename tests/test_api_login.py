@@ -1,6 +1,8 @@
 import json
 from profileapp import create_app
 import unittest
+from tests import VALID_PROFILE_ADMIN, VALID_ADMIN1_REGISTER, VALID_ADMIN1_LOGIN, VALID_USER2_REGISTER_WITH_ADMIN, \
+    VALID_PROFILE_ANFITRION, VALID_ANFITRION1_REGISTER, VALID_ANFITRION1_LOGIN
 
 
 class FlaskTest(unittest.TestCase):
@@ -17,13 +19,11 @@ class FlaskTest(unittest.TestCase):
         tester = create_app().test_client(self)
 
         tester.post("/profiles/add/",
-                    data=json.dumps({'id': 0, 'description': 'admin'}),
+                    data=VALID_PROFILE_ADMIN,
                     content_type='application/json')
 
         tester.post("/register/",
-                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com',
-                                     'password': '', 'national_id': '12345678', 'national_id_type': 'DNI',
-                                     'alias': 'gonzalgo', 'profile': 0}),
+                    data=VALID_ADMIN1_REGISTER,
                     content_type='application/json')
 
         response = tester.post("/login/",
@@ -32,24 +32,22 @@ class FlaskTest(unittest.TestCase):
 
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data_back['error'], "password is empty")
+        self.assertEqual(data_back['Error'], "User Password must not be empty")
         self.assertEqual(status_code, 400)
 
     def test_valid_user_login_successful(self):
         tester = create_app().test_client(self)
 
-        response_profile = tester.post("/profiles/add/",
-                                       data=json.dumps({'id': 0, 'description': 'admin'}),
-                                       content_type='application/json')
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ADMIN,
+                    content_type='application/json')
 
         tester.post("/register/",
-                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com',
-                                    'password': '123456789', 'national_id': '12345678', 'national_id_type': 'DNI',
-                                     'alias': 'gonzalgo', 'profile': 0}),
+                    data=VALID_ADMIN1_REGISTER,
                     content_type='application/json')
 
         response = tester.post("/login/",
-                               data=json.dumps({'email': 'algo@algo.com', 'password': '123456789'}),
+                               data=VALID_ADMIN1_LOGIN,
                                content_type='application/json')
 
         status_code = response.status_code
@@ -68,20 +66,18 @@ class FlaskTest(unittest.TestCase):
                                content_type='application/json')
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data_back['error'], "user not existent")
+        self.assertEqual(data_back['Error'], "The email: algo@algo.com is not registered")
         self.assertEqual(status_code, 400)
 
     def test_login_unsuccessful_wrong_password(self):
         tester = create_app().test_client(self)
 
-        response_profile = tester.post("/profiles/add/",
-                                       data=json.dumps({'id': 0, 'description': 'admin'}),
-                                       content_type='application/json')
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ADMIN,
+                    content_type='application/json')
 
         tester.post("/register/",
-                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com',
-                                     'password': '123456789', 'national_id': '12345678', 'national_id_type': 'DNI',
-                                     'alias': 'gonzalgo', 'profile': 0}),
+                    data=VALID_ADMIN1_REGISTER,
                     content_type='application/json')
 
         response = tester.post("/login/",
@@ -90,5 +86,5 @@ class FlaskTest(unittest.TestCase):
 
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data_back['error'], "login failed")
+        self.assertEqual(data_back['Error'], "User Password is invalid")
         self.assertEqual(status_code, 400)

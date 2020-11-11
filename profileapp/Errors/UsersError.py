@@ -23,3 +23,15 @@ class UserPasswordMustNotBeEmpty(ProfileAppException):
     def __init__(self):
         self.message = "User Password must not be empty"
         super().__init__(self.message)
+
+
+class UserPasswordInvalid(ProfileAppException):
+    def __init__(self):
+        self.message = "User Password is invalid"
+        super().__init__(self.message)
+
+
+class UserMailInvalid(ProfileAppException):
+    def __init__(self, user_info):
+        self.message = "The email: " + str(user_info) + " is not registered"
+        super().__init__(self.message)

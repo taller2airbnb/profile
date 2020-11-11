@@ -1,12 +1,11 @@
 from profileapp import database
-from profileapp.model import Users, Profile, ProfileUser
+from profileapp.model import Users, ProfileUser
 from flask import request
 from flask import Blueprint
 from flask import jsonify
 import hashlib
 from flask_expects_json import expects_json
-from profileapp.api.utils import user_password_empty, validate_existent_profile_id, user_exists, \
-    validate_free_user_identifiers, validate_user_password
+from profileapp.api.utils import validate_existent_profile_id, validate_free_user_identifiers, validate_user_password
 from flasgger.utils import swag_from
 from profileapp.Errors.ProfileAppException import ProfileAppException
 

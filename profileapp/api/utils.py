@@ -8,9 +8,13 @@ def user_password_empty(new_user_password):
     return new_user_password == ''
 
 
-def validate_user_password(user_password):
+def validate_user_password(user_password, stored_password=None):
     if user_password == '':
         raise UsersError.UserPasswordMustNotBeEmpty()
+    if stored_password is not None:
+        encoded_password = hashlib.md5(user_password.encode()).hexdigest()
+        if stored_password != encoded_password:
+            raise UsersError.UserPasswordInvalid
 
 
 def validate_existent_profile_id(profile_id):
@@ -34,6 +38,12 @@ def validate_free_user_identifiers(new_user_mail, new_user_alias):
     alias_taken = Users.query.filter_by(alias=new_user_alias).first() is not None
     if mail_taken or alias_taken:
         raise UsersError.UserIdentifierAlreadyTaken(new_user_mail + " or " + new_user_alias)
+
+
+def validate_existent_user_by_mail(user_mail):
+    mail_taken = Users.query.filter_by(email=user_mail).first() is not None
+    if not mail_taken:
+        raise UsersError.UserMailInvalid(user_mail)
 
 
 def correct_password(password_login, user_password):

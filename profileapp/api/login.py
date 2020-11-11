@@ -1,11 +1,11 @@
-from profileapp import database
 from profileapp.model import Users, ProfileUser
 from flask import request
 from flask import Blueprint
 from flask import jsonify
 from flask_expects_json import expects_json
-from profileapp.api.utils import user_password_empty, user_exists, correct_password
+from profileapp.api.utils import user_exists, correct_password, validate_user_password, validate_existent_user_by_mail
 from flasgger.utils import swag_from
+from profileapp.Errors.ProfileAppException import ProfileAppException
 
 schema_new_user = {
     'type': 'object',
@@ -72,18 +72,16 @@ def login():
     # if payload is valid it is stored in g.data
     post_data = request.get_json()
 
-    if user_password_empty(post_data['password']):
-        return jsonify({'error': "password is empty"}), 400
+    try:
+        validate_existent_user_by_mail(post_data['email'])
 
-    if not user_exists(post_data['email']):
-        return jsonify({'error': "user not existent"}), 400
+        user = Users.query.filter_by(email=post_data['email']).first()
 
-    user = Users.query.filter_by(email=post_data['email']).first()
+        validate_user_password(post_data['password'], user.password)
 
-    if not correct_password(post_data['password'], user.password):
-        return jsonify({'error': "login failed"}), 400
+        profile_user = ProfileUser.query.filter_by(id_user=user.id_user).first()
 
-    profile_user = ProfileUser.query.filter_by(id_user=user.id_user).first()
-
-    return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email,
-                    'profile': profile_user.id_profile}), 200
+        return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email,
+                        'profile': profile_user.id_profile}), 200
+    except ProfileAppException as e:
+        return jsonify({'Error': e.message}), 400
