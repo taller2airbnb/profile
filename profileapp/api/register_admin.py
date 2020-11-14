@@ -4,6 +4,7 @@ from profileapp.api.register import register_new_user
 from profileapp.api.utils import validate_user_is_admin, get_id_profile_from_description
 from flasgger.utils import swag_from
 from profileapp.Errors.ProfileAppException import ProfileAppException
+from flask import current_app
 
 schema_new_admin = {
     'type': 'object',
@@ -96,9 +97,13 @@ def register_new_admin():
     # if payload is invalid, request will be aborted with error code 400
     # if payload is valid it is stored in g.data
     post_data = request.get_json()
+    current_app.logger.info("Registering admin " + post_data['email'])
     try:
         validate_user_is_admin(post_data['user_logged_id'])
         post_data['profile'] = get_id_profile_from_description('admin')
     except ProfileAppException as e:
+        current_app.logger.error("Admin registration for " + post_data['email'] + "failed.")
         return jsonify({'Error': e.message}), 400
+
+    current_app.logger.info("Admin registration for " + post_data['email'] + "succeeded.")
     return register_new_user()

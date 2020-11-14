@@ -50,6 +50,6 @@ def create_app():
 
     # setup logging
     logging.basicConfig(filename='error.log', level=logging.DEBUG)
-    app.logger.info('Database up and running')
+    app.logger.info('New session started. Database up and running')
 
     return app

@@ -8,6 +8,7 @@ from flask_expects_json import expects_json
 from profileapp.api.utils import validate_existent_profile_id, validate_free_user_identifiers, validate_user_password
 from flasgger.utils import swag_from
 from profileapp.Errors.ProfileAppException import ProfileAppException
+from flask import current_app
 
 schema_new_user = {
     'type': 'object',
@@ -99,11 +100,13 @@ def register_new_user():
     # if payload is invalid, request will be aborted with error code 400
     # if payload is valid it is stored in g.data
     post_data = request.get_json()
+    current_app.logger.info("Registering user " + post_data['email'])
     try:
         validate_existent_profile_id(post_data['profile'])
         validate_free_user_identifiers(post_data['email'], post_data['alias'])
         validate_user_password(post_data['password'])
     except ProfileAppException as e:
+        current_app.logger.error("Registration for user " + post_data['email'] + "failed.")
         return jsonify({'Error': e.message}), 400
 
     password = hashlib.md5(post_data['password'].encode()).hexdigest()
@@ -119,6 +122,7 @@ def register_new_user():
         # commit to persist into the database
         database.db.session.commit()
     except:
+        current_app.logger.error("Something happened creating the user " + post_data['email'] + "in the database.")
         return jsonify({'Error': "Something happened creating the User in the Database"}), 400
 
     user_created = Users.query.filter_by(email=post_data['email']).first()
@@ -131,6 +135,8 @@ def register_new_user():
         # commit to persist into the database
         database.db.session.commit()
     except:
+        current_app.logger.error("Something happened creating the Profile-User relation for user " + post_data['email'] + "in the database.")
         return jsonify({'error': "Something happened creating the Profile-User relation in the Database"}), 400
 
+    current_app.logger.info("Registration for user " + post_data['email'] + "succeeded.")
     return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email}), 200
