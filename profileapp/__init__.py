@@ -11,6 +11,7 @@ from profileapp.api.profiles import bp_profiles
 from profileapp.api.login import bp_login
 from profileapp.api.change_password import bp_change_password
 from flasgger import Swagger
+import logging
 
 
 def create_app():
@@ -46,5 +47,9 @@ def create_app():
 
     # setup swagger
     swagger = Swagger(app)
+
+    # setup logging
+    logging.basicConfig(filename='error.log', level=logging.DEBUG)
+    app.logger.info('Database up and running')
 
     return app
