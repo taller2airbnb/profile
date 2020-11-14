@@ -9,13 +9,13 @@ class Users(db.Model):
     # __tablename__= 'users'
 
     id_user = db.Column(db.Integer, primary_key=True)
-    alias = db.Column(db.String(80), unique=True, nullable=False)
+    alias = db.Column(db.String(80), nullable=False)
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
     national_id = db.Column(db.String(50))
     national_id_type = db.Column(db.String(50))
     email = db.Column(db.String(255), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
+    password = db.Column(db.String(255))
     blocked = db.Column(db.BOOLEAN, default=False)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
 
