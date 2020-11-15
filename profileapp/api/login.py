@@ -6,6 +6,7 @@ from flask_expects_json import expects_json
 from profileapp.api.utils import validate_user_password, validate_existent_user_by_mail
 from flasgger.utils import swag_from
 from profileapp.Errors.ProfileAppException import ProfileAppException
+from flask import current_app
 
 schema_new_user = {
     'type': 'object',
@@ -71,6 +72,7 @@ def login():
     # if payload is invalid, request will be aborted with error code 400
     # if payload is valid it is stored in g.data
     post_data = request.get_json()
+    current_app.logger.info("Attempting login for " + post_data['email'])
 
     try:
         validate_existent_user_by_mail(post_data['email'])
@@ -81,7 +83,9 @@ def login():
 
         profile_user = ProfileUser.query.filter_by(id_user=user.id_user).first()
 
+        current_app.logger.info("Login " + post_data['email'] + " successful.")
         return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email,
                         'profile': profile_user.id_profile}), 200
     except ProfileAppException as e:
+        current_app.logger.info("Login " + post_data['email'] + " failed.")
         return jsonify({'Error': e.message}), 400

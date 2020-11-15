@@ -5,6 +5,8 @@ from flask import Blueprint
 from flask import jsonify
 from flask_expects_json import expects_json
 from flasgger.utils import swag_from
+from flask import current_app
+
 
 schema_new_user = {
     'type': 'object',
@@ -61,6 +63,7 @@ def add_new_profile():
     # if payload is valid it is stored in g.data
     post_data = request.get_json()
 
+    current_app.logger.info('Creating new profile: ' + post_data['description'])
     profile = Profile(id_profile=post_data['id'], description=post_data['description'])
 
     try:
@@ -70,8 +73,10 @@ def add_new_profile():
         # commit to persist into the database
         database.db.session.commit()
     except:
-        return jsonify({'Error': "profile already exist"}), 400
+        current_app.logger.error('Profile creation failed: profile with id' + post_data['id'] + ' already exists.')
+        return jsonify({'Error': "profile already exists"}), 400
 
+    current_app.logger.info('Profile ' + post_data['description'] + ' successfully created.')
     return jsonify({'id': profile.id_profile, 'description': profile.description}), 200
 
 
