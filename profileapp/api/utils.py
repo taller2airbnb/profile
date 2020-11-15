@@ -18,9 +18,11 @@ def validate_existent_profile_id(profile_id):
         raise ProfileError.ProfileNotExistentById(profile_id)
 
 
-def validate_free_user_identifiers(new_user_mail, new_user_alias):
+def validate_free_user_identifiers(new_user_mail, new_user_alias=None):
     mail_taken = Users.query.filter_by(email=new_user_mail).first() is not None
     alias_taken = Users.query.filter_by(alias=new_user_alias).first() is not None
+    if new_user_alias is None:
+        new_user_alias = ''
     if mail_taken or alias_taken:
         raise UsersError.UserIdentifierAlreadyTaken(new_user_mail + " or " + new_user_alias)
 
