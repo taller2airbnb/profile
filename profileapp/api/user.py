@@ -128,16 +128,46 @@ def get_fields_from_user():
     Profile id and description is going to be given
     ---
     tags:
-      - profiles
+      - user
     consumes:
       - application/json
     parameters:
       - name: body
         in: body
-        required: false
+        required: true
+        schema:
+            required:
+              - id
+            properties:
+              id:
+                type: integer
+                description: Unique identifier for user whose fields we want to get.
     responses:
       200:
-        description: A list of profiles created
+        description: Successful get data request.
+        schema:
+          properties:
+              id:
+                type: integer
+                description: Unique identifier of the requested user.
+              first_name:
+                type: string
+                description: Name of the requested user.
+              last_name:
+                type: string
+                description: Last name of the requested user.
+              alias:
+                type: string
+                description: Alias of the requested user.
+              email:
+                type: string
+                description: Unique email of the requested user.
+              national_id:
+                type: string
+                description: National ID of the requested user.
+              national_id_type:
+                type: string
+                description: National ID type of the requested user.
     """
     get_data = request.get_json()
     current_app.logger.info('Getting info from user: ' + str(get_data['id']))
