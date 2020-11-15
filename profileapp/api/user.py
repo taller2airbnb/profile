@@ -159,6 +159,7 @@ def get_fields_from_user():
         'national_id': user.national_id,
         'national_id_type': user.national_id_type
     }
+    current_app.logger.info('Obtained info from user: ' + str(get_data['id']) + ' successfully.')
     return jsonify(response_object), 200
 
 
