@@ -11,6 +11,7 @@ from profileapp.api.profiles import bp_profiles
 from profileapp.api.login import bp_login
 from profileapp.api.change_password import bp_change_password
 from profileapp.api.google_auth import bp_google_auth
+from profileapp.api.user import bp_user
 from flasgger import Swagger
 import logging
 
@@ -34,6 +35,7 @@ def create_app():
     CORS(bp_login)
     CORS(bp_change_password)
     CORS(bp_google_auth)
+    CORS(bp_user)
 
     @app.before_first_request
     def create_db():
@@ -47,6 +49,7 @@ def create_app():
     app.register_blueprint(bp_login)
     app.register_blueprint(bp_change_password)
     app.register_blueprint(bp_google_auth)
+    app.register_blueprint(bp_user)
 
     # setup swagger
     swagger = Swagger(app)

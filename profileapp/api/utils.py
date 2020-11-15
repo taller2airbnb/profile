@@ -60,3 +60,13 @@ def get_id_profile_from_description(profile_description):
 def validate_user_is_admin(user_id):
     if not (profile_is_admin(get_profile_from_user_id(user_id))):
         raise UsersError.UserIsNotAnAdminError(user_id)
+
+
+def validate_modify_schema_not_empty(data, fields):
+    valid = False
+    for field in fields:
+        if field in data and data[field] != '':
+            valid = True
+            break
+    if not valid:
+        raise UsersError.EmptyModifySchema()
