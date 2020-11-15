@@ -21,3 +21,14 @@ VALID_ANFITRION1_REGISTER = json.dumps({'first_name': 'Anfi', 'last_name': 'trio
                                    'alias': 'anfitrion', 'profile': 1})
 
 VALID_ANFITRION1_LOGIN = json.dumps({'email': 'anfi@algo.com', 'password': '123456789'})
+
+VALID_MODIFY_ANFITRION = json.dumps({'first_name': 'Norbert', 'last_name': 'DeGoas', 'national_id': '334455',
+                                     'national_id_type': 'CedulaVerde', 'id': 1})
+
+VALID_MODIFY_ANFITRION_JUST_NAME = json.dumps({'first_name': 'Norbert', 'id': 1})
+
+INVALID_MODIFY_USER_EMPTY = json.dumps({'id': 1})
+
+INVALID_MODIFY_USER_BLANK = json.dumps({'first_name': '', 'last_name': '', 'national_id': '', 'national_id_type': '',
+                                        'id': 1})
+VALID_USER_INFO = json.dumps({'id': 1})
