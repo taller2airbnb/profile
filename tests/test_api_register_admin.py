@@ -14,7 +14,7 @@ class FlaskTest(unittest.TestCase):
                     data=VALID_PROFILE_ADMIN,
                     content_type='application/json')
 
-        tester.post("/register/",
+        tester.post("/user/",
                     data=VALID_ADMIN1_REGISTER,
                     content_type='application/json')
 
@@ -42,7 +42,7 @@ class FlaskTest(unittest.TestCase):
                     data=VALID_PROFILE_ANFITRION,
                     content_type='application/json')
 
-        tester.post("/register/",
+        tester.post("/user/",
                     data=VALID_ANFITRION1_REGISTER,
                     content_type='application/json')
 

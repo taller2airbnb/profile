@@ -1,6 +1,6 @@
 from flask import request, Blueprint, jsonify
 from flask_expects_json import expects_json
-from profileapp.api.register import register_new_user
+from profileapp.api.user import register_new_user
 from profileapp.api.utils import validate_user_is_admin, get_id_profile_from_description
 from flasgger.utils import swag_from
 from profileapp.Errors.ProfileAppException import ProfileAppException

@@ -24,11 +24,11 @@ class FlaskTest(unittest.TestCase):
     def test_create_and_get_profiles(self):
         tester = create_app().test_client(self)
         tester.post("/profiles/add/",
-                               data=json.dumps({'id': 0, 'description': 'admin'}),
-                               content_type='application/json')
+                    data=json.dumps({'id': 0, 'description': 'admin'}),
+                    content_type='application/json')
         tester.post("/profiles/add/",
-                               data=json.dumps({'id': 1, 'description': 'anfitrion'}),
-                               content_type='application/json')
+                    data=json.dumps({'id': 1, 'description': 'anfitrion'}),
+                    content_type='application/json')
         response = tester.get("/profiles/")
         status_code = response.status_code
         data = json.loads(response.get_data(as_text=True))
