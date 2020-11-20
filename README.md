@@ -1,3 +1,6 @@
+[![codecov](https://codecov.io/gh/taller2airbnb/profile/branch/main/graph/badge.svg?token=I719YMGKSD)](https://codecov.io/gh/taller2airbnb/profile)
+
+
 # Profile Services - Flask App - API
 
 ## Webserver Local
