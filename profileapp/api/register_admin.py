@@ -103,7 +103,7 @@ def register_new_admin():
         post_data['profile'] = get_id_profile_from_description('admin')
     except ProfileAppException as e:
         current_app.logger.error("Admin registration for " + post_data['email'] + "failed.")
-        return jsonify({'Error': e.message}), 400
+        return jsonify({'Error': e.message}), e.error_code
 
     current_app.logger.info("Admin registration for " + post_data['email'] + "succeeded.")
     return register_new_user()

@@ -74,7 +74,7 @@ def change_password():
         validate_user_password(post_data['new_pass'])
     except ProfileAppException as e:
         current_app.logger.error("Password change for " + post_data['email'] + " failed.")
-        return jsonify({'Error': e.message}), 400
+        return jsonify({'Error': e.message}), e.error_code
 
     new_password = hashlib.md5(post_data['new_pass'].encode()).hexdigest()
     user = Users.query.filter_by(email=post_data['email']).first()

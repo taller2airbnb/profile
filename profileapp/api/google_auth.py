@@ -90,7 +90,7 @@ def google_register():
             validate_existent_profile_id(post_data['profile'])
             validate_free_user_identifiers(email)
         except ProfileAppException as e:
-            return jsonify({'Error': e.message}), 400
+            return jsonify({'Error': e.message}), e.error_code
         user = Users(first_name=first_name, last_name=last_name, email=email, alias=alias)
         try:
             # add to the database session
@@ -162,7 +162,7 @@ def google_login():
         try:
             validate_existent_user_by_mail(email)
         except ProfileAppException as e:
-            return jsonify({'Error': e.message}), 400
+            return jsonify({'Error': e.message}), e.error_code
 
         user = Users.query.filter_by(email=email).first()
         if user.password is not None:

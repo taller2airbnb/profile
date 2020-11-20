@@ -88,4 +88,4 @@ def login():
                         'profile': profile_user.id_profile}), 200
     except ProfileAppException as e:
         current_app.logger.info("Login " + post_data['email'] + " failed.")
-        return jsonify({'Error': e.message}), 400
+        return jsonify({'Error': e.message}), e.error_code

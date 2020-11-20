@@ -34,7 +34,7 @@ class FlaskTest(unittest.TestCase):
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         # print(logging.getLogger('error'))
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 404)
         self.assertEqual(data_back['Error'], "Not exists Profile by id: 0")
 
     def test_register_fails_user_email_taken(self):
@@ -60,7 +60,7 @@ class FlaskTest(unittest.TestCase):
         data_back_admin = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back_admin['Error'],
                          "Some User identifier is already taken: anfi@algo.com or Jorgejo")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 403)
 
     def test_register_fails_user_alias_taken(self):
         tester = create_app().test_client(self)
@@ -85,7 +85,7 @@ class FlaskTest(unittest.TestCase):
         data_back_admin = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back_admin['Error'],
                          "Some User identifier is already taken: algo2@algo.com or anfitrion")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 403)
 
     def test_create_user_with_empty_password(self):
         tester = create_app().test_client(self)
@@ -103,7 +103,7 @@ class FlaskTest(unittest.TestCase):
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], "User Password must not be empty")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 409)
 
     def test_create_user_successful_sufficient_fields_existent_profile(self):
         tester = create_app().test_client(self)
@@ -132,7 +132,7 @@ class FlaskTest(unittest.TestCase):
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], "Not exists User: " + str(json.loads(VALID_MODIFY_ANFITRION)['id']))
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 404)
 
     def test_modify_fields_empty_non_mandatory_fields(self):
         tester = create_app().test_client(self)
@@ -151,7 +151,7 @@ class FlaskTest(unittest.TestCase):
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], 'No fields were submitted in the request to modify user.')
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 409)
 
         response = tester.put("/user/",
                               data=INVALID_MODIFY_USER_BLANK,
@@ -159,7 +159,7 @@ class FlaskTest(unittest.TestCase):
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], 'No fields were submitted in the request to modify user.')
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 409)
 
     def test_get_user_info_successfully(self):
         tester = create_app().test_client(self)
@@ -280,4 +280,4 @@ class FlaskTest(unittest.TestCase):
         data_back = json.loads(response.get_data(as_text=True))
 
         self.assertEqual(data_back['Error'], "Not exists User: 1")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 404)

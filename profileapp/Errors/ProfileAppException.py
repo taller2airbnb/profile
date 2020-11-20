@@ -6,6 +6,7 @@ class ProfileAppException(Exception):
         message -- explanation of the error
     """
 
-    def __init__(self, message):
+    def __init__(self, message, error_code=400):
         self.message = message
+        self.error_code = error_code
 

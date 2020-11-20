@@ -32,7 +32,7 @@ class FlaskTest(unittest.TestCase):
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], "User Password must not be empty")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 409)
 
     def test__change_password_unsuccessful_non_existent_email(self):
         tester = create_app().test_client(self)
@@ -42,7 +42,7 @@ class FlaskTest(unittest.TestCase):
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], "The email: asdasd@asd.com is not registered")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 401)
 
     def test__fail_to_login_with_old_pass(self):
         tester = create_app().test_client(self)
@@ -78,7 +78,7 @@ class FlaskTest(unittest.TestCase):
         status_code = response_login.status_code
         data_back = json.loads(response_login.get_data(as_text=True))
         self.assertEqual(data_back['Error'], "User Password is invalid")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 401)
 
     def test__change_password_successful(self):
         tester = create_app().test_client(self)

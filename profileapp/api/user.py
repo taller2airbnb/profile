@@ -128,7 +128,7 @@ def register_new_user():
         validate_user_password(post_data['password'])
     except ProfileAppException as e:
         current_app.logger.error("Registration for user " + post_data['email'] + "failed.")
-        return jsonify({'Error': e.message}), 400
+        return jsonify({'Error': e.message}), e.error_code
 
     password = hashlib.md5(post_data['password'].encode()).hexdigest()
 
@@ -223,7 +223,7 @@ def modify_user():
         validate_modify_schema_not_empty(post_data, non_mandatory_fields)
     except ProfileAppException as e:
         current_app.logger.error("Modification for user " + str(post_data['id']) + " failed.")
-        return jsonify({'Error': e.message}), 400
+        return jsonify({'Error': e.message}), e.error_code
 
     user = Users.query.filter_by(id_user=post_data['id']).first()
 
@@ -297,7 +297,7 @@ def get_fields_from_user(id):
         validate_user_id_exists(id)
     except ProfileAppException as e:
         current_app.logger.error("Getting info from user " + id + " failed.")
-        return jsonify({'Error': e.message}), 400
+        return jsonify({'Error': e.message}), e.error_code
 
     user = Users.query.filter_by(id_user=id).first()
 

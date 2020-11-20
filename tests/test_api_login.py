@@ -32,7 +32,7 @@ class FlaskTest(unittest.TestCase):
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], "User Password must not be empty")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 409)
 
     def test_valid_user_login_successful(self):
         tester = create_app().test_client(self)
@@ -66,7 +66,7 @@ class FlaskTest(unittest.TestCase):
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], "The email: algo@algo.com is not registered")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 401)
 
     def test_login_unsuccessful_wrong_password(self):
         tester = create_app().test_client(self)
@@ -86,4 +86,4 @@ class FlaskTest(unittest.TestCase):
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], "User Password is invalid")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 401)

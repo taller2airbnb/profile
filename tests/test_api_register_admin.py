@@ -59,4 +59,4 @@ class FlaskTest(unittest.TestCase):
         status_code = response.status_code
         data_back_admin = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back_admin['Error'], "The User: 1 is not an admin")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 403)
