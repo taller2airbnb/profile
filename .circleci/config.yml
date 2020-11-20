@@ -21,10 +21,10 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             export APP_SETTINGS="config.TestingWithDBConfig"
-            bash <(curl -s https://codecov.io/bash)
             coverage run -m unittest discover
             coverage run -m pytest
             coverage report -m
+            bash <(curl -s https://codecov.io/bash)
 
   build-and-deploy:
     docker:
