@@ -1,8 +1,8 @@
 import json
+import requests
 from profileapp import database
 from profileapp.model import Users, ProfileUser
 from flask import request
-import requests
 from flask import Blueprint
 from flask import jsonify
 from flask_expects_json import expects_json

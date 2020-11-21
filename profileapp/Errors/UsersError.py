@@ -56,3 +56,11 @@ class EmptyModifySchema(ProfileAppException):
         self.message = "No fields were submitted in the request to modify user."
         self.error_code = 409
         super().__init__(self.message, self.error_code)
+
+
+class UserTypeNotExistentError(ProfileAppException):
+    def __init__(self, user_info, message="Not exists UserType: "):
+        current_app.logger.error("The user type " + str(user_info) + " does not exist.")
+        self.message = message + str(user_info)
+        self.error_code = 404
+        super().__init__(self.message, self.error_code)

@@ -2,6 +2,7 @@ from profileapp.model import Users, Profile, ProfileUser
 import hashlib
 from profileapp.database import db
 from profileapp.Errors import UsersError, ProfileError
+from profileapp.api import valid_user_types
 
 
 def validate_user_password(user_password, stored_password=None):
@@ -70,3 +71,8 @@ def validate_modify_schema_not_empty(data, fields):
             break
     if not valid:
         raise UsersError.EmptyModifySchema()
+
+
+def validate_user_type(user_type):
+    if user_type not in valid_user_types:
+        raise UsersError.UserTypeNotExistentError(user_type)

@@ -3,7 +3,7 @@ from profileapp import create_app
 import unittest
 from tests import VALID_MODIFY_ANFITRION, INVALID_MODIFY_USER_EMPTY, INVALID_MODIFY_USER_BLANK, \
     VALID_MODIFY_ANFITRION_JUST_NAME, VALID_PROFILE_ADMIN, VALID_ADMIN1_REGISTER, VALID_PROFILE_ANFITRION, \
-    VALID_ANFITRION1_REGISTER
+    VALID_ANFITRION1_REGISTER, VALID_ADMIN1_LOGIN, VALID_USER2_REGISTER_WITH_ADMIN, VALID_ANFITRION1_LOGIN
 
 
 class FlaskTest(unittest.TestCase):
@@ -50,7 +50,8 @@ class FlaskTest(unittest.TestCase):
 
         response = tester.post("/user/",
                                data=json.dumps(
-                                   {'user_type': 'bookbnb', 'first_name': 'Jorge', 'last_name': 'Paez', 'email': 'anfi@algo.com',
+                                   {'user_type': 'bookbnb', 'first_name': 'Jorge', 'last_name': 'Paez',
+                                    'email': 'anfi@algo.com',
                                     'password': '123456789', 'national_id': '123478',
                                     'national_id_type': 'DNI', 'alias': 'Jorgejo', 'user_logged_id': 1,
                                     'profile': 1}),
@@ -75,7 +76,8 @@ class FlaskTest(unittest.TestCase):
 
         response = tester.post("/user/",
                                data=json.dumps(
-                                   {'user_type': 'bookbnb', 'first_name': 'Jorge', 'last_name': 'Paez', 'email': 'algo2@algo.com',
+                                   {'user_type': 'bookbnb', 'first_name': 'Jorge', 'last_name': 'Paez',
+                                    'email': 'algo2@algo.com',
                                     'password': '123456789', 'national_id': '123478',
                                     'national_id_type': 'DNI', 'alias': 'anfitrion', 'user_logged_id': 1,
                                     'profile': 1}),
@@ -96,7 +98,8 @@ class FlaskTest(unittest.TestCase):
 
         response = tester.post("/user/",
                                data=json.dumps(
-                                   {'user_type': 'bookbnb', 'first_name': 'Gonza', 'last_name': 'Paez', 'email': 'algo@algo.com',
+                                   {'user_type': 'bookbnb', 'first_name': 'Gonza', 'last_name': 'Paez',
+                                    'email': 'algo@algo.com',
                                     'password': '', 'national_id': '12345678', 'national_id_type': 'DNI',
                                     'alias': 'gonzalgo', 'profile': 0}),
                                content_type='application/json')
@@ -281,3 +284,78 @@ class FlaskTest(unittest.TestCase):
 
         self.assertEqual(data_back['Error'], "Not exists User: 1")
         self.assertEqual(status_code, 404)
+
+    def test_register_fails_usertype_invalid(self):
+        tester = create_app().test_client(self)
+
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ANFITRION,
+                    content_type='application/json')
+
+        response = tester.post("/user/",
+                               data=json.dumps(
+                                   {'user_type': 'pepe', 'first_name': 'Jorge', 'last_name': 'Paez',
+                                    'email': 'anfi@algo.com',
+                                    'password': '123456789', 'national_id': '123478',
+                                    'national_id_type': 'DNI', 'alias': 'Jorgejo', 'user_logged_id': 1,
+                                    'profile': 1}),
+                               content_type='application/json')
+
+        status_code = response.status_code
+        data_back_admin = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data_back_admin['Error'], "Not exists UserType: pepe")
+        self.assertEqual(status_code, 404)
+
+    def test_successful_register_admin(self):
+        tester = create_app().test_client(self)
+
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ADMIN,
+                    content_type='application/json')
+
+        tester.post("/user/",
+                    data=VALID_ADMIN1_REGISTER,
+                    content_type='application/json')
+
+        tester.post("/login/",
+                    data=VALID_ADMIN1_LOGIN,
+                    content_type='application/json')
+
+        response = tester.post("/user/",
+                               data=VALID_USER2_REGISTER_WITH_ADMIN,
+                               content_type='application/json')
+
+        status_code = response.status_code
+        data_back = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data_back['name'], "Admin")
+        self.assertEqual(data_back['email'], "admin@algo.com")
+        self.assertEqual(data_back['alias'], "administrador")
+        self.assertEqual(data_back['id'], 2)
+        self.assertEqual(status_code, 200)
+
+    def test_register_admin_fails_user_not_admin(self):
+        # Login with anfitrion and try to create admin must fail
+        tester = create_app().test_client(self)
+
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ANFITRION,
+                    content_type='application/json')
+
+        tester.post("/user/",
+                    data=VALID_ANFITRION1_REGISTER,
+                    content_type='application/json')
+
+        tester.post("/login/",
+                    data=VALID_ANFITRION1_LOGIN,
+                    content_type='application/json')
+
+        response = tester.post("/user/",
+                               data=json.dumps({'user_type': 'admin', 'first_name': 'Jorge', 'last_name': 'Paez', 'email': 'algo2@algo.com', 'password': '123456789',
+                                                'national_id': '123478', 'national_id_type': 'DNI',
+                                                'alias': 'Jorgejo', 'user_logged_id': 1, 'profile': 0}),
+                               content_type='application/json')
+
+        status_code = response.status_code
+        data_back_admin = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data_back_admin['Error'], "The User: 1 is not an admin")
+        self.assertEqual(status_code, 403)

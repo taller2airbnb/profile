@@ -11,9 +11,9 @@ VALID_ADMIN1_REGISTER = json.dumps({'user_type': 'bookbnb', 'first_name': 'Gonza
 
 VALID_ADMIN1_LOGIN = json.dumps({'email': 'algo@algo.com', 'password': '123456789'})
 
-VALID_USER2_REGISTER_WITH_ADMIN = json.dumps({'user_type': 'bookbnb', 'first_name': 'Admin', 'last_name': 'Istrador', 'email': 'admin@algo.com',
+VALID_USER2_REGISTER_WITH_ADMIN = json.dumps({'user_type': 'admin', 'first_name': 'Admin', 'last_name': 'Istrador', 'email': 'admin@algo.com',
                                          'password': '123456789', 'national_id': '12345678', 'national_id_type': 'DNI',
-                                         'alias': 'administrador', 'user_logged_id': 1})
+                                         'alias': 'administrador', 'user_logged_id': 1, 'profile': 0})
 
 VALID_ANFITRION1_REGISTER = json.dumps({'user_type': 'bookbnb', 'first_name': 'Anfi', 'last_name': 'trion', 'email': 'anfi@algo.com',
                                    'password': '123456789', 'national_id': '12345678',
