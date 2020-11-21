@@ -11,10 +11,12 @@ from profileapp.api.utils import validate_user_id_exists, validate_modify_schema
 from flasgger.utils import swag_from
 from profileapp.Errors.ProfileAppException import ProfileAppException
 from flask import current_app
+from profileapp.api import valid_user_types
 
 schema_new_user = {
     'type': 'object',
     'properties': {
+        'user_type': {'type': 'string'},
         'first_name': {'type': 'string'},
         'last_name': {'type': 'string'},
         'email': {'type': 'string'},
@@ -22,9 +24,11 @@ schema_new_user = {
         'national_id_type': {'type': 'string'},
         'alias': {'type': 'string'},
         'password': {'type': 'string'},
-        'profile': {'type': 'integer'}
+        'profile': {'type': 'integer'},
+        'google_token': {'type': 'string'},
+        'user_logged_id': {'type': 'integer'}
     },
-    'required': ['first_name', 'last_name', 'email', 'national_id', 'national_id_type', 'alias', 'password', 'profile']}
+    'required': ['user_type', 'profile']}
 
 schema_modify_user = {
     'type': 'object',
@@ -54,7 +58,7 @@ bp_user = Blueprint('user', __name__, url_prefix='/user/')
 def register_new_user():
     """
     Register a new user
-    The new user has to fulfill all the required fields
+    The new user has to fulfill the required fields by type
     ---
     tags:
       - user
@@ -66,6 +70,7 @@ def register_new_user():
         required: true
         schema:
             required:
+              - user_type
               - first_name
               - last_name
               - email
@@ -74,31 +79,41 @@ def register_new_user():
               - alias
               - password
               - profile
+              - google_token
             properties:
+              user_type:
+                type: string
+                description: REQUIRED - Type of user in registration - BookBnb, Admin or GoogleUser
               first_name:
                 type: string
-                description: First name of the new user
+                description: First name of the new user - BookBnb, Admin
               last_name:
                 type: string
-                description: Last name of the new user
+                description: Last name of the new user - BookBnb, Admin
               email:
                 type: string
-                description: Unique email representing the new user
+                description: Unique email representing the new user - BookBnb, Admin
               national_id:
                 type: string
-                description: National ID of the new user
+                description: National ID of the new user - BookBnb, Admin
               national_id_type:
                 type: string
-                description: National ID Type of the new user
+                description: National ID Type of the new user - BookBnb, Admin
               alias:
                 type: string
-                description: Unique alias representing the new user
+                description: Unique alias representing the new user - BookBnb, Admin
               password:
                 type: string
-                description: Password of the new user
+                description: Password of the new user - BookBnb, Admin
               profile:
                 type: integer
-                description: Profile of the new user, has to be an existing one (check /profiles/)
+                description: REQUIRED - Profile of the new user, has to be an existing one (check /profiles/) - All Type of Users
+              google_token:
+                type: string
+                description: identifier representing a google user - GoogleUser
+              user_logged_id:
+                type: integer
+                description: Id of the user that creates the admin. - Admin
     responses:
       200:
         description: A successful profile creation
@@ -121,47 +136,52 @@ def register_new_user():
     # if payload is invalid, request will be aborted with error code 400
     # if payload is valid it is stored in g.data
     post_data = request.get_json()
-    current_app.logger.info("Registering user " + post_data['email'])
-    try:
-        validate_existent_profile_id(post_data['profile'])
-        validate_free_user_identifiers(post_data['email'], post_data['alias'])
-        validate_user_password(post_data['password'])
-    except ProfileAppException as e:
-        current_app.logger.error("Registration for user " + post_data['email'] + "failed.")
-        return jsonify({'Error': e.message}), e.error_code
+    user_type = post_data['user_type']
+    if user_type not in valid_user_types:
+        return jsonify({'Error': 'no es user type'}), 400
 
-    password = hashlib.md5(post_data['password'].encode()).hexdigest()
+    if user_type.lower() == 'bookbnb':
+        current_app.logger.info("Registering user " + post_data['email'])
+        try:
+            validate_existent_profile_id(post_data['profile'])
+            validate_free_user_identifiers(post_data['email'], post_data['alias'])
+            validate_user_password(post_data['password'])
+        except ProfileAppException as e:
+            current_app.logger.error("Registration for user " + post_data['email'] + "failed.")
+            return jsonify({'Error': e.message}), e.error_code
 
-    user = Users(first_name=post_data['first_name'], last_name=post_data['last_name'], email=post_data['email'],
-                 national_id=post_data['national_id'], national_id_type=post_data['national_id_type'],
-                 alias=post_data['alias'], password=password)
+        password = hashlib.md5(post_data['password'].encode()).hexdigest()
 
-    try:
-        # add to the database session
-        database.db.session.add(user)
+        user = Users(first_name=post_data['first_name'], last_name=post_data['last_name'], email=post_data['email'],
+                     national_id=post_data['national_id'], national_id_type=post_data['national_id_type'],
+                     alias=post_data['alias'], password=password)
 
-        # commit to persist into the database
-        database.db.session.commit()
-    except:
-        current_app.logger.error("Something happened creating the user " + post_data['email'] + "in the database.")
-        return jsonify({'Error': "Something happened creating the User in the Database"}), 400
+        try:
+            # add to the database session
+            database.db.session.add(user)
 
-    user_created = Users.query.filter_by(email=post_data['email']).first()
-    profile_user = ProfileUser(id_user=user_created.id_user, id_profile=post_data['profile'])
+            # commit to persist into the database
+            database.db.session.commit()
+        except:
+            current_app.logger.error("Something happened creating the user " + post_data['email'] + "in the database.")
+            return jsonify({'Error': "Something happened creating the User in the Database"}), 400
 
-    try:
-        # add to the database session
-        database.db.session.add(profile_user)
+        user_created = Users.query.filter_by(email=post_data['email']).first()
+        profile_user = ProfileUser(id_user=user_created.id_user, id_profile=post_data['profile'])
 
-        # commit to persist into the database
-        database.db.session.commit()
-    except:
-        current_app.logger.error(
-            "Something happened creating the Profile-User relation for user " + post_data['email'] + "in the database.")
-        return jsonify({'error': "Something happened creating the Profile-User relation in the Database"}), 400
+        try:
+            # add to the database session
+            database.db.session.add(profile_user)
 
-    current_app.logger.info("Registration for user " + post_data['email'] + "succeeded.")
-    return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email}), 200
+            # commit to persist into the database
+            database.db.session.commit()
+        except:
+            current_app.logger.error(
+                "Something happened creating the Profile-User relation for user " + post_data['email'] + "in the database.")
+            return jsonify({'error': "Something happened creating the Profile-User relation in the Database"}), 400
+
+        current_app.logger.info("Registration for user " + post_data['email'] + "succeeded.")
+        return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email}), 200
 
 
 @bp_user.route("/", methods=['PUT'])

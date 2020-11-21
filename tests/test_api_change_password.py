@@ -55,7 +55,7 @@ class FlaskTest(unittest.TestCase):
                     content_type='application/json')
 
         response_user = tester.post("/user/",
-                                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email':
+                                    data=json.dumps({'user_type': 'bookbnb', 'first_name': 'Gonza', 'last_name': 'Paez', 'email':
                                         'algo@algo.com', 'password': old_pass, 'national_id': '12345678',
                                                      'national_id_type': 'DNI', 'alias': 'gonzalgo', 'profile': 0}),
                                     content_type='application/json')
@@ -93,7 +93,7 @@ class FlaskTest(unittest.TestCase):
                     content_type='application/json')
 
         response_user = tester.post("/user/",
-                                    data=json.dumps({'first_name': 'Gonza', 'last_name': 'Paez', 'email':
+                                    data=json.dumps({'user_type': 'bookbnb', 'first_name': 'Gonza', 'last_name': 'Paez', 'email':
                                         'algo@algo.com', 'password': old_pass, 'national_id': '12345678',
                                                      'national_id_type': 'DNI', 'alias': 'gonzalgo', 'profile': 0}),
                                     content_type='application/json')

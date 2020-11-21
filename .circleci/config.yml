@@ -24,6 +24,7 @@ jobs:
             coverage run -m unittest discover
             coverage run -m pytest
             coverage report -m
+            bash <(curl -s https://codecov.io/bash)
 
   build-and-deploy:
     docker:

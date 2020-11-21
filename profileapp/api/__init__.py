@@ -1,0 +1,1 @@
+valid_user_types = ['bookbnb', 'googleuser', 'admin']
