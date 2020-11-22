@@ -13,6 +13,7 @@ from profileapp.api.utils import validate_user_id_exists, validate_modify_schema
 from flasgger.utils import swag_from
 from profileapp.Errors.ProfileAppException import ProfileAppException
 from flask import current_app
+from profileapp.api import GOOGLE_VALIDATOR, USER_ADMIN, USER_BOOKBNB, USER_GOOGLE
 
 schema_new_user = {
     'type': 'object',
@@ -41,8 +42,6 @@ schema_modify_user = {
         'id': {'type': 'integer'}
     },
     'required': ['id']}
-
-GOOGLE_VALIDATOR = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json"
 
 bp_user = Blueprint('user', __name__, url_prefix='/user/')
 
@@ -136,13 +135,13 @@ def register_new_user():
     try:
         validate_user_type(user_type)
 
-        if user_type.lower() == 'admin':
+        if user_type.lower() == USER_ADMIN:
             return register_admin_user(post_data)
 
-        if user_type.lower() == 'bookbnb':
+        if user_type.lower() == USER_BOOKBNB:
             return register_bookbnb_user(post_data)
 
-        if user_type.lower() == 'googleuser':
+        if user_type.lower() == USER_GOOGLE:
             return register_google_user(post_data)
 
     except ProfileAppException as e:
@@ -387,63 +386,3 @@ def get_fields_from_user(id):
     }
     current_app.logger.info('Obtained info from user: ' + id + ' successfully.')
     return jsonify(response_object), 200
-
-
-
-
-#
-# @bp_google_auth.route("/login", methods=['POST'])
-# @swag_from(methods=['POST'])
-# @expects_json(schema_user_login_from_google)
-# def google_login():
-#     """
-#     login
-#     Existent user is needed
-#     ---
-#     tags:
-#       - login
-#     consumes:
-#       - application/json
-#     parameters:
-#       - name: body
-#         in: body
-#         required: true
-#         schema:
-#             required:
-#               - token
-#             properties:
-#               token:
-#                 type: string
-#                 description: identifier representing a google user
-#     responses:
-#       200:
-#         description: A successful profile creation
-#         schema:
-#           properties:
-#               token:
-#                 type: string
-#                 description: identifier representing a google user
-#     """
-#     # @expects_json(schema_new_user)
-#     # if payload is invalid, request will be aborted with error code 400
-#     # if payload is valid it is stored in g.data
-#     post_data = request.get_json()
-#     headers = {
-#         "Authorization": "Bearer " + str(post_data['token'])
-#     }
-#     response = requests.get(GOOGLE_VALIDATOR, headers=headers)
-#     response_json = json.loads(response.content)
-#     if "error" in response_json:
-#         return jsonify({'Error Received': 'Not able to validate token with GoogleAPI'}), 400
-#     else:
-#         email = response_json['email']
-#         try:
-#             validate_existent_user_by_mail(email)
-#         except ProfileAppException as e:
-#             return jsonify({'Error': e.message}), 400
-#
-#         user = Users.query.filter_by(email=email).first()
-#         if user.password is not None:
-#             return jsonify({'Error': 'User register without Google Auth'}), 400
-#
-#         return jsonify({'Token Validated': 'Ok', 'id': user.id_user}), 200

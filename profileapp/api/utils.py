@@ -81,3 +81,8 @@ def validate_user_type(user_type):
 def validate_google_response(response):
     if "error" in response:
         raise UsersError.UserGoogleValidateFailed()
+
+
+def validate_is_google_user(user):
+    if user.password is not None:
+        raise UsersError.UserIsNotGoogleUserError()

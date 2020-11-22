@@ -72,3 +72,11 @@ class UserGoogleValidateFailed(ProfileAppException):
         self.message = 'Not able to validate token with GoogleAPI'
         self.error_code = 401
         super().__init__(self.message, self.error_code)
+
+
+class UserIsNotGoogleUserError(ProfileAppException):
+    def __init__(self):
+        current_app.logger.error('User register without Google Auth')
+        self.message = 'User register without Google Auth'
+        self.error_code = 403
+        super().__init__(self.message, self.error_code)
