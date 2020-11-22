@@ -149,20 +149,24 @@ def register_new_user():
         return jsonify({'Error': e.message}), e.error_code
 
     if user_type.lower() == 'admin':
-        try:
-            validate_user_is_admin(post_data['user_logged_id'])
-            post_data['profile'] = get_id_profile_from_description('admin')
-            user_type = 'bookbnb'
-        except ProfileAppException as e:
-            current_app.logger.error("Admin registration for " + post_data['email'] + "failed.")
-            return jsonify({'Error': e.message}), e.error_code
+        return register_admin_user(post_data)
 
-        current_app.logger.info("Admin registration for " + post_data['email'] + "succeeded.")
     if user_type.lower() == 'bookbnb':
         return register_bookbnb_user(post_data)
 
     if user_type.lower() == 'googleuser':
         return register_google_user(post_data)
+
+
+def register_admin_user(post_data):
+    try:
+        validate_user_is_admin(post_data['user_logged_id'])
+        post_data['profile'] = get_id_profile_from_description('admin')
+    except ProfileAppException as e:
+        current_app.logger.error("Admin registration for " + post_data['email'] + "failed.")
+        return jsonify({'Error': e.message}), e.error_code
+
+    return register_bookbnb_user(post_data)
 
 
 def register_bookbnb_user(post_data):
