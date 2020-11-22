@@ -3,26 +3,32 @@ from flask import request
 from flask import Blueprint
 from flask import jsonify
 from flask_expects_json import expects_json
-from profileapp.api.utils import validate_user_password, validate_existent_user_by_mail
+from profileapp.api.utils import validate_user_password, validate_existent_user_by_mail, validate_google_response, \
+    validate_user_type
 from flasgger.utils import swag_from
 from profileapp.Errors.ProfileAppException import ProfileAppException
 from flask import current_app
+import json
+import requests
 
-schema_new_user = {
+GOOGLE_VALIDATOR = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json"
+
+schema_login_user = {
     'type': 'object',
     'properties': {
+        'user_type': {'type': 'string'},
         'email': {'type': 'string'},
-        'alias': {'type': 'string'},
         'password': {'type': 'string'},
+        'google_token': {'type': 'string'},
     },
-    'required': ['email', 'password']}
+    'required': ['user_type']}
 
 bp_login = Blueprint('login', __name__, url_prefix='/login/')
 
 
 @bp_login.route("/", methods=['POST'])
 @swag_from(methods=['POST'])
-@expects_json(schema_new_user)
+@expects_json(schema_login_user)
 def login():
     """
     Login
@@ -72,9 +78,16 @@ def login():
     # if payload is invalid, request will be aborted with error code 400
     # if payload is valid it is stored in g.data
     post_data = request.get_json()
-    current_app.logger.info("Attempting login for " + post_data['email'])
+    user_type = post_data['user_type']
 
     try:
+        validate_user_type(user_type)
+
+        if user_type.lower() == 'googleuser':
+            return login_google_user(post_data)
+
+        current_app.logger.info("Attempting login for " + post_data['email'])
+
         validate_existent_user_by_mail(post_data['email'])
 
         user = Users.query.filter_by(email=post_data['email']).first()
@@ -89,3 +102,24 @@ def login():
     except ProfileAppException as e:
         current_app.logger.info("Login " + post_data['email'] + " failed.")
         return jsonify({'Error': e.message}), e.error_code
+
+
+def login_google_user(post_data):
+    headers = {
+        "Authorization": "Bearer " + str(post_data['google_token'])
+    }
+    response = requests.get(GOOGLE_VALIDATOR, headers=headers)
+    response_json = json.loads(response.content)
+
+    validate_google_response(response_json)
+    email = response_json['email']
+    try:
+        validate_existent_user_by_mail(email)
+    except ProfileAppException as e:
+        return jsonify({'Error': e.message}), e.error_code
+
+    user = Users.query.filter_by(email=email).first()
+    if user.password is not None:
+        return jsonify({'Error': 'User register without Google Auth'}), 400
+
+    return jsonify({'Token Validated': 'Ok', 'id': user.id_user, "Mail": user.email}), 200

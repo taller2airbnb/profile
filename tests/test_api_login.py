@@ -26,7 +26,7 @@ class FlaskTest(unittest.TestCase):
                     content_type='application/json')
 
         response = tester.post("/login/",
-                               data=json.dumps({'email': 'algo@algo.com', 'password': ''}),
+                               data=json.dumps({'user_type': 'bookbnb', 'email': 'algo@algo.com', 'password': ''}),
                                content_type='application/json')
 
         status_code = response.status_code
@@ -61,7 +61,7 @@ class FlaskTest(unittest.TestCase):
         tester = create_app().test_client(self)
 
         response = tester.post("/login/",
-                               data=json.dumps({'email': 'algo@algo.com', 'password': '123456789'}),
+                               data=json.dumps({'user_type': 'bookbnb', 'email': 'algo@algo.com', 'password': '123456789'}),
                                content_type='application/json')
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
@@ -80,7 +80,7 @@ class FlaskTest(unittest.TestCase):
                     content_type='application/json')
 
         response = tester.post("/login/",
-                               data=json.dumps({'email': 'algo@algo.com', 'password': 'otropassword'}),
+                               data=json.dumps({'user_type': 'bookbnb', 'email': 'algo@algo.com', 'password': 'otropassword'}),
                                content_type='application/json')
 
         status_code = response.status_code

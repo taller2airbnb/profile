@@ -66,7 +66,7 @@ class FlaskTest(unittest.TestCase):
                                         content_type='application/json')
 
         response_login = tester.post("/login/",
-                                     data=json.dumps({'email': 'algo@algo.com', 'password': old_pass}),
+                                     data=json.dumps({'user_type': 'bookbnb', 'email': 'algo@algo.com', 'password': old_pass}),
                                      content_type='application/json')
 
         status_code = response_password.status_code
@@ -104,7 +104,7 @@ class FlaskTest(unittest.TestCase):
                                         content_type='application/json')
 
         response_login = tester.post("/login/",
-                                     data=json.dumps({'email': 'algo@algo.com', 'password': new_pass}),
+                                     data=json.dumps({'user_type': 'bookbnb', 'email': 'algo@algo.com', 'password': new_pass}),
                                      content_type='application/json')
 
         status_code = response_password.status_code

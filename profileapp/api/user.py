@@ -9,11 +9,10 @@ from flask import jsonify
 from flask_expects_json import expects_json
 from profileapp.api.utils import validate_user_id_exists, validate_modify_schema_not_empty, \
     validate_existent_profile_id, validate_free_user_identifiers, validate_user_password, validate_user_type, \
-    validate_user_is_admin, get_id_profile_from_description, validate_existent_user_by_mail
+    validate_user_is_admin, get_id_profile_from_description, validate_existent_user_by_mail, validate_google_response
 from flasgger.utils import swag_from
 from profileapp.Errors.ProfileAppException import ProfileAppException
 from flask import current_app
-from profileapp.api import valid_user_types
 
 schema_new_user = {
     'type': 'object',
@@ -42,14 +41,6 @@ schema_modify_user = {
         'id': {'type': 'integer'}
     },
     'required': ['id']}
-
-schema_get_user_by_id = {
-    'type': 'object',
-    'properties': {
-        'id': {'type': 'integer'}
-    },
-    'required': ['id']
-}
 
 GOOGLE_VALIDATOR = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json"
 
@@ -144,40 +135,33 @@ def register_new_user():
 
     try:
         validate_user_type(user_type)
+
+        if user_type.lower() == 'admin':
+            return register_admin_user(post_data)
+
+        if user_type.lower() == 'bookbnb':
+            return register_bookbnb_user(post_data)
+
+        if user_type.lower() == 'googleuser':
+            return register_google_user(post_data)
+
     except ProfileAppException as e:
         current_app.logger.error("Registration for user " + post_data['email'] + "failed.")
         return jsonify({'Error': e.message}), e.error_code
 
-    if user_type.lower() == 'admin':
-        return register_admin_user(post_data)
-
-    if user_type.lower() == 'bookbnb':
-        return register_bookbnb_user(post_data)
-
-    if user_type.lower() == 'googleuser':
-        return register_google_user(post_data)
-
 
 def register_admin_user(post_data):
-    try:
-        validate_user_is_admin(post_data['user_logged_id'])
-        post_data['profile'] = get_id_profile_from_description('admin')
-    except ProfileAppException as e:
-        current_app.logger.error("Admin registration for " + post_data['email'] + "failed.")
-        return jsonify({'Error': e.message}), e.error_code
-
+    validate_user_is_admin(post_data['user_logged_id'])
+    post_data['profile'] = get_id_profile_from_description('admin')
     return register_bookbnb_user(post_data)
 
 
 def register_bookbnb_user(post_data):
     current_app.logger.info("Registering user " + post_data['email'])
-    try:
-        validate_existent_profile_id(post_data['profile'])
-        validate_free_user_identifiers(post_data['email'], post_data['alias'])
-        validate_user_password(post_data['password'])
-    except ProfileAppException as e:
-        current_app.logger.error("Registration for user " + post_data['email'] + "failed.")
-        return jsonify({'Error': e.message}), e.error_code
+
+    validate_existent_profile_id(post_data['profile'])
+    validate_free_user_identifiers(post_data['email'], post_data['alias'])
+    validate_user_password(post_data['password'])
 
     password = hashlib.md5(post_data['password'].encode()).hexdigest()
 
@@ -199,26 +183,24 @@ def register_google_user(post_data):
     }
     response = requests.get(GOOGLE_VALIDATOR, headers=headers)
     response_json = json.loads(response.content)
-    if "error" in response_json:
-        return jsonify({'Error Received': 'Not able to validate token with GoogleAPI'}), 400
-    else:
-        email = response_json['email']
-        last_name = response_json['family_name']
-        first_name = response_json['given_name']
-        alias = response_json['name']
-        try:
-            validate_existent_profile_id(post_data['profile'])
-            validate_free_user_identifiers(email)
-        except ProfileAppException as e:
-            return jsonify({'Error': e.message}), 400
-        user = Users(first_name=first_name, last_name=last_name, email=email, alias=alias)
 
-        attempt = create_user_in_db(database.db.session, user, post_data)
-        if not attempt:
-            return attempt
+    validate_google_response(response_json)
+    email = response_json['email']
+    last_name = response_json['family_name']
+    first_name = response_json['given_name']
+    alias = response_json['name']
 
-        current_app.logger.info("Google registration for user " + post_data['email'] + "succeeded.")
-        return jsonify({'Token Validated': 'Ok', 'id': user.id_user}), 200
+    validate_existent_profile_id(post_data['profile'])
+    validate_free_user_identifiers(email)
+
+    user = Users(first_name=first_name, last_name=last_name, email=email, alias=alias)
+
+    attempt = create_user_in_db(database.db.session, user, post_data)
+    if not attempt:
+        return attempt
+
+    current_app.logger.info("Google registration for user " + email + "succeeded.")
+    return jsonify({'Token Validated': 'Ok', 'id': user.id_user, "Email": email}), 200
 
 
 def create_user_in_db(db, user, post_data):

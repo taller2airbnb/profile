@@ -64,3 +64,11 @@ class UserTypeNotExistentError(ProfileAppException):
         self.message = message + str(user_info)
         self.error_code = 404
         super().__init__(self.message, self.error_code)
+
+
+class UserGoogleValidateFailed(ProfileAppException):
+    def __init__(self):
+        current_app.logger.error('Not able to validate token with GoogleAPI')
+        self.message = 'Not able to validate token with GoogleAPI'
+        self.error_code = 401
+        super().__init__(self.message, self.error_code)

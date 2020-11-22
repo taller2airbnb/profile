@@ -76,3 +76,8 @@ def validate_modify_schema_not_empty(data, fields):
 def validate_user_type(user_type):
     if user_type not in valid_user_types:
         raise UsersError.UserTypeNotExistentError(user_type)
+
+
+def validate_google_response(response):
+    if "error" in response:
+        raise UsersError.UserGoogleValidateFailed()
