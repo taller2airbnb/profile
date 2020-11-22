@@ -103,7 +103,6 @@ def login_google_user(post_data):
     }
     response = requests.get(GOOGLE_VALIDATOR, headers=headers)
     response_json = json.loads(response.content)
-
     validate_google_response(response_json)
     email = response_json['email']
 

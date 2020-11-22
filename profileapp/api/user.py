@@ -145,7 +145,7 @@ def register_new_user():
             return register_google_user(post_data)
 
     except ProfileAppException as e:
-        current_app.logger.error("Registration for user " + post_data['email'] + "failed.")
+        current_app.logger.error("Registration for user failed.")
         return jsonify({'Error': e.message}), e.error_code
 
 
@@ -182,6 +182,7 @@ def register_google_user(post_data):
     }
     response = requests.get(GOOGLE_VALIDATOR, headers=headers)
     response_json = json.loads(response.content)
+    print(response_json)
 
     validate_google_response(response_json)
     email = response_json['email']
