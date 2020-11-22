@@ -159,53 +159,37 @@ def register_new_user():
 
         current_app.logger.info("Admin registration for " + post_data['email'] + "succeeded.")
     if user_type.lower() == 'bookbnb':
+        return register_bookbnb_user(post_data)
 
-        current_app.logger.info("Registering user " + post_data['email'])
-        try:
-            validate_existent_profile_id(post_data['profile'])
-            validate_free_user_identifiers(post_data['email'], post_data['alias'])
-            validate_user_password(post_data['password'])
-        except ProfileAppException as e:
-            current_app.logger.error("Registration for user " + post_data['email'] + "failed.")
-            return jsonify({'Error': e.message}), e.error_code
-
-        password = hashlib.md5(post_data['password'].encode()).hexdigest()
-
-        user = Users(first_name=post_data['first_name'], last_name=post_data['last_name'], email=post_data['email'],
-                     national_id=post_data['national_id'], national_id_type=post_data['national_id_type'],
-                     alias=post_data['alias'], password=password)
-
-        try:
-            # add to the database session
-            database.db.session.add(user)
-
-            # commit to persist into the database
-            database.db.session.commit()
-        except:
-            current_app.logger.error("Something happened creating the user " + post_data['email'] + "in the database.")
-            return jsonify({'Error': "Something happened creating the User in the Database"}), 400
-
-        user_created = Users.query.filter_by(email=post_data['email']).first()
-        profile_user = ProfileUser(id_user=user_created.id_user, id_profile=post_data['profile'])
-
-        try:
-            # add to the database session
-            database.db.session.add(profile_user)
-
-            # commit to persist into the database
-            database.db.session.commit()
-        except:
-            current_app.logger.error(
-                "Something happened creating the Profile-User relation for user " + post_data['email'] + "in the database.")
-            return jsonify({'error': "Something happened creating the Profile-User relation in the Database"}), 400
-
-        current_app.logger.info("Registration for user " + post_data['email'] + "succeeded.")
-        return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email}), 200
     if user_type.lower() == 'googleuser':
-        return register_googleuser(post_data)
+        return register_google_user(post_data)
 
 
-def register_googleuser(post_data):
+def register_bookbnb_user(post_data):
+    current_app.logger.info("Registering user " + post_data['email'])
+    try:
+        validate_existent_profile_id(post_data['profile'])
+        validate_free_user_identifiers(post_data['email'], post_data['alias'])
+        validate_user_password(post_data['password'])
+    except ProfileAppException as e:
+        current_app.logger.error("Registration for user " + post_data['email'] + "failed.")
+        return jsonify({'Error': e.message}), e.error_code
+
+    password = hashlib.md5(post_data['password'].encode()).hexdigest()
+
+    user = Users(first_name=post_data['first_name'], last_name=post_data['last_name'], email=post_data['email'],
+                 national_id=post_data['national_id'], national_id_type=post_data['national_id_type'],
+                 alias=post_data['alias'], password=password)
+
+    attempt = create_user_in_db(database.db.session, user, post_data)
+    if not attempt:
+        return attempt
+
+    current_app.logger.info("Registration for user " + post_data['email'] + "succeeded.")
+    return jsonify({'id': user.id_user, 'name': user.first_name, 'alias': user.alias, 'email': user.email}), 200
+
+
+def register_google_user(post_data):
     headers = {
         "Authorization": "Bearer " + str(post_data['google_token'])
     }
@@ -224,29 +208,49 @@ def register_googleuser(post_data):
         except ProfileAppException as e:
             return jsonify({'Error': e.message}), 400
         user = Users(first_name=first_name, last_name=last_name, email=email, alias=alias)
-        try:
-            # add to the database session
-            database.db.session.add(user)
-            # commit to persist into the database
-            database.db.session.commit()
-        except:
-            return jsonify({'Error': "Something happened creating the User in the Database"}), 400
 
-        user_created = Users.query.filter_by(email=email).first()
-        profile_user = ProfileUser(id_user=user_created.id_user, id_profile=post_data['profile'])
-        try:
-            # add to the database session
-            database.db.session.add(profile_user)
+        attempt = create_user_in_db(database.db.session, user, post_data)
+        if not attempt:
+            return attempt
 
-            # commit to persist into the database
-            database.db.session.commit()
-        except:
-            return jsonify({'error': "Something happened creating the Profile-User relation in the Database"}), 400
-
+        current_app.logger.info("Google registration for user " + post_data['email'] + "succeeded.")
         return jsonify({'Token Validated': 'Ok', 'id': user.id_user}), 200
 
 
+def create_user_in_db(db, user, post_data):
+    try:
+        # add to the database session
+        database.db.session.add(user)
 
+        # commit to persist into the database
+        database.db.session.commit()
+    except:
+        current_app.logger.error("Something happened creating the user " + user.email + "in the database.")
+        return jsonify({'Error': "Something happened creating the User in the Database"}), 400
+
+    user_created = Users.query.filter_by(email=user.email).first()
+    profile_user = ProfileUser(id_user=user_created.id_user, id_profile=post_data['profile'])
+
+    attempt = create_profile_user_in_db(database.db.session, profile_user, post_data)
+    if not attempt:
+        return attempt
+
+    return True
+
+
+def create_profile_user_in_db(db, profile_user, post_data):
+    try:
+        # add to the database session
+        database.db.session.add(profile_user)
+
+        # commit to persist into the database
+        database.db.session.commit()
+    except:
+        current_app.logger.error(
+            "Something happened creating the Profile-User relation for user " + post_data['email'] + "in the database.")
+        return jsonify({'error': "Something happened creating the Profile-User relation in the Database"}), 400
+
+    return True
 
 
 @bp_user.route("/", methods=['PUT'])
