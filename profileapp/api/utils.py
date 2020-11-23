@@ -86,3 +86,8 @@ def validate_google_response(response):
 def validate_is_google_user(user):
     if user.password is not None:
         raise UsersError.UserIsNotGoogleUserError()
+
+
+def validate_user_not_blocked(user_id):
+    if Users.query.filter_by(id_user=user_id).first().blocked:
+        raise UsersError.UserIsBlockedError(user_id)

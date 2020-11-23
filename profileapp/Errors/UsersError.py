@@ -80,3 +80,11 @@ class UserIsNotGoogleUserError(ProfileAppException):
         self.message = 'User register without Google Auth'
         self.error_code = 403
         super().__init__(self.message, self.error_code)
+
+
+class UserIsBlockedError(ProfileAppException):
+    def __init__(self, user_info, message="User is blocked: "):
+        current_app.logger.error("The user " + str(user_info) + " is blocked.")
+        self.message = message + str(user_info)
+        self.error_code = 403
+        super().__init__(self.message, self.error_code)

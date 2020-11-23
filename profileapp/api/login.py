@@ -4,7 +4,7 @@ from flask import Blueprint
 from flask import jsonify
 from flask_expects_json import expects_json
 from profileapp.api.utils import validate_user_password, validate_existent_user_by_mail, validate_google_response, \
-    validate_user_type, validate_is_google_user
+    validate_user_type, validate_is_google_user, validate_user_not_blocked
 from flasgger.utils import swag_from
 from profileapp.Errors.ProfileAppException import ProfileAppException
 from flask import current_app
@@ -110,6 +110,7 @@ def login_google_user(post_data):
 
     user = Users.query.filter_by(email=email).first()
 
+    validate_user_not_blocked(user.id_user)
     validate_is_google_user(user)
 
     return jsonify({'Token Validated': 'Ok', 'id': user.id_user, "Mail": user.email}), 200
@@ -122,6 +123,7 @@ def login_bookbnb_user(post_data):
 
     user = Users.query.filter_by(email=post_data['email']).first()
 
+    validate_user_not_blocked(user.id_user)
     validate_user_password(post_data['password'], user.password)
 
     profile_user = ProfileUser.query.filter_by(id_user=user.id_user).first()

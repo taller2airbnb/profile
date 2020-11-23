@@ -20,52 +20,6 @@ schema_modify_user = {
 
 
 def modify_user():
-    """
-    Modifies a user's name or national ID fields.
-    No specific field is required but at least one must not be empty.
-    ---
-    tags:
-      - user
-    consumes:
-      - application/json
-    parameters:
-      - name: body
-        in: body
-        required: true
-        schema:
-            required:
-              - id
-            properties:
-              first_name:
-                type: string
-                description: New first name.
-              last_name:
-                type: string
-                description: New last name.
-              national_id:
-                type: string
-                description: New national id.
-              national_id_type:
-                type: string
-                description: New national id type.
-              id:
-                type: integer
-                description: Unique identifier for user whose fields will be modified.
-    responses:
-      200:
-        description: A successful user modification.
-        schema:
-          properties:
-              id:
-                type: integer
-                description: Unique identifier representing the user.
-              modify_user:
-                type: string
-                description: Validation, expected 'Ok'.
-    """
-    # @expects_json(schema_new_user)
-    # if payload is invalid, request will be aborted with error code 400
-    # if payload is valid it is stored in g.data
     post_data = request.get_json()
     non_mandatory_fields = schema_modify_user['properties'].keys() - schema_modify_user['required']
     current_app.logger.info('Modifying user: ' + str(post_data['id']))
@@ -101,3 +55,31 @@ def modify_user():
 
     current_app.logger.info("Modification for user with id " + str(post_data['id']) + " succeeded.")
     return jsonify({'id': user.id_user, 'modify_user': 'OK'}), 200
+
+
+def blocked_status(user_id):
+    new_status = (request.get_json())['new_status']
+    current_app.logger.info('Blocking user: ' + str(user_id))
+    try:
+        validate_user_id_exists(user_id)
+    except ProfileAppException as e:
+        current_app.logger.error("Block user " + str(user_id) + " failed.")
+        return jsonify({'Error': e.message}), e.error_code
+
+    user = Users.query.filter_by(id_user=user_id).first()
+
+    user.blocked = new_status
+
+    try:
+        # commit to persist into the database
+        database.db.session.commit()
+    except:
+        current_app.logger.error("Error when attempting to block user " + str(user_id) + " in the database.")
+        return jsonify({'Error': "Something happened when attempting to block user in the Database"}), 400
+
+    current_app.logger.info("Blocking for user with id " + str(user_id) + " succeeded.")
+    return jsonify({'id': user.id_user, 'modify_user': 'OK'}), 200
+
+
+def recover_password(user_id):
+    return

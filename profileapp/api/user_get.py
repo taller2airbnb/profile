@@ -7,44 +7,6 @@ from profileapp.model import Users
 
 
 def get_fields_from_user(id):
-    """
-    Get fields from user
-    Profile id and description is going to be given
-    ---
-    tags:
-      - user
-    parameters:
-      - in: path
-        name: id
-        type: integer
-        required: false
-    responses:
-      200:
-        description: A single user info
-        schema:
-          properties:
-              email:
-                type: string
-                description: Unique email of the created user
-              alias:
-                type: string
-                description: Unique alias of the created user
-              id:
-                type: integer
-                description: Unique identifier of the created user
-              first_name:
-                type: string
-                description: first name of the created user
-              last_name:
-                type: string
-                description: last name of the created user
-              national_id:
-                type: string
-                description: national id
-              national_id_type:
-                type: string
-                description: national id type
-    """
     current_app.logger.info('Getting info from user: ' + str(id))
     try:
         validate_user_id_exists(id)
@@ -61,51 +23,14 @@ def get_fields_from_user(id):
         'alias': user.alias,
         'email': user.email,
         'national_id': user.national_id,
-        'national_id_type': user.national_id_type
+        'national_id_type': user.national_id_type,
+        'blocked': user.blocked
     }
     current_app.logger.info('Obtained info from user: ' + str(id) + ' successfully.')
     return jsonify(response_object), 200
 
 
 def get_fields_from_users():
-    """
-    Get fields from user
-    Profile id and description is going to be given
-    ---
-    tags:
-      - user
-    parameters:
-      - in: path
-        name: id
-        type: integer
-        required: false
-    responses:
-      200:
-        description: A single user info
-        schema:
-          properties:
-              email:
-                type: string
-                description: Unique email of the created user
-              alias:
-                type: string
-                description: Unique alias of the created user
-              id:
-                type: integer
-                description: Unique identifier of the created user
-              first_name:
-                type: string
-                description: first name of the created user
-              last_name:
-                type: string
-                description: last name of the created user
-              national_id:
-                type: string
-                description: national id
-              national_id_type:
-                type: string
-                description: national id type
-    """
     current_app.logger.info('Getting info from users')
 
     users = Users.query.all()
@@ -119,7 +44,8 @@ def get_fields_from_users():
             'alias': user.alias,
             'email': user.email,
             'national_id': user.national_id,
-            'national_id_type': user.national_id_type
+            'national_id_type': user.national_id_type,
+            'blocked': user.blocked
         }
         users_list.append(user_object)
 
