@@ -2,6 +2,7 @@ version: 2.1
 jobs:
   test:
     docker:
+      - image: cimg/node:15.0.1
       - image: circleci/python:3.6.4 # every job must define an image for the docker executor and subsequent jobs may define a different image.
       - image: circleci/postgres:9.6.2 # an example of how to specify a service container
         environment:
@@ -9,12 +10,7 @@ jobs:
           POSTGRES_DB: postgres
     steps:
       - checkout
-          command: |
-            curl -sSL "https://nodejs.org/dist/v12.16.2/node-v12.16.2-linux-x64.tar.xz" | sudo tar --strip-components=2 -xJ -C /usr/local/bin/ node-v12.16.2-linux-x64/bin/node
-            curl https://www.npmjs.com/install.sh | sudo bash
-      - run:
-          name: Check current version of node
-          command: node -v
+      - run: node --version
       - run:
           name: Install Python deps in a venv
           command: |
