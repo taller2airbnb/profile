@@ -13,14 +13,17 @@ from flasgger import Swagger
 import logging
 
 
-def create_app():
+def create_app(my_config=None):
     # setup app
     app = Flask(__name__)
     # setup CORS
     cors = CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
     # setup with the configuration provided by the user / environment
-    app.config.from_object(os.environ['APP_SETTINGS'])
+    if my_config is None:
+        app.config.from_object(os.environ['APP_SETTINGS'])
+    else:
+        app.config.from_object(my_config)
     # setup all our dependencies, for now only database using application factory pattern
     database.init_app(app)
     commands.init_app(app)

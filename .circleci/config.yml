@@ -16,6 +16,11 @@ jobs:
             . venv/bin/activate
             pip install -r requirements.txt
       - run:
+          name: Getting up fake endpoints for Google token test
+          command: |
+            npm install -g json-server
+            json-server -q db.json &
+      - run:
           name: Runing test
           command: |
             python3 -m venv venv
