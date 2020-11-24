@@ -4,7 +4,7 @@ from flask_expects_json import expects_json
 
 from profileapp.api.user_get import get_fields_from_users, get_fields_from_user
 from profileapp.api.user_post import register_new_user, schema_new_user
-from profileapp.api.user_put import modify_user, schema_modify_user, blocked_status
+from profileapp.api.user_put import modify_user, schema_modify_user, blocked_status, new_password
 
 bp_user = Blueprint('user', __name__, url_prefix='/user/')
 
@@ -180,6 +180,50 @@ def blocked_status_api(user_id):
                 description: Expected 'Blocked'.
     """
     return blocked_status(user_id)
+
+
+@bp_user.route("/<int:user_id>/password/", methods=['PUT'])
+@swag_from(methods=['PUT'])
+def new_password_api(user_id):
+    """
+    Change Password for user's by id and token
+    ---
+    tags:
+      - user
+    consumes:
+      - application/json
+    parameters:
+      - in: path
+        name: user_id
+        type: integer
+        required: true
+      - name: body
+        in: body
+        required: true
+        schema:
+            required:
+              - token
+              - new_password
+            properties:
+              token:
+                type: string
+                description: Token for validate new password.
+              new_password:
+                type: string
+                description: New password.
+    responses:
+      200:
+        description: A successful change of user blocked status.
+        schema:
+          properties:
+              user_id:
+                type: integer
+                description: Unique identifier representing the user.
+              block_user:
+                type: string
+                description: Expected 'Blocked'.
+    """
+    return new_password(user_id)
 
 
 @bp_user.route("/<int:id>", methods=['GET'])

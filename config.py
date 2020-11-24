@@ -9,6 +9,14 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = 'b\'\xc5>`\xe3C\x19\x13\xdc\xeaV\xefT\x9d\xa4x\xae\''
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_SUPPRESS_SEND = False
+    MAIL_DEBUG = True
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
 
 class ProductionConfig(Config):

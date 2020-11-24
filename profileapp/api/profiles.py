@@ -1,12 +1,12 @@
+from flasgger.utils import swag_from
+from flask import Blueprint
+from flask import current_app
+from flask import jsonify
+from flask import request
+from flask_expects_json import expects_json
+
 from profileapp import database
 from profileapp.model import Profile
-from flask import request
-from flask import Blueprint
-from flask import jsonify
-from flask_expects_json import expects_json
-from flasgger.utils import swag_from
-from flask import current_app
-
 
 schema_new_user = {
     'type': 'object',
@@ -73,7 +73,7 @@ def add_new_profile():
         # commit to persist into the database
         database.db.session.commit()
     except:
-        current_app.logger.error('Profile creation failed: profile with id' + post_data['id'] + ' already exists.')
+        current_app.logger.error('Profile creation failed: profile with id' + str(post_data['id']) + ' already exists.')
         return jsonify({'Error': "profile already exists"}), 400
 
     current_app.logger.info('Profile ' + post_data['description'] + ' successfully created.')

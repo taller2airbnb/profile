@@ -1,16 +1,19 @@
-import profileapp.model
-import profileapp.database
-import profileapp.commands
+import logging
 import os
+
+from flasgger import Swagger
 from flask import Flask
 from flask_cors import CORS
+from flask_mail import Mail
+
+import profileapp.commands
+import profileapp.database
+import profileapp.model
 from profileapp.api.home_info import bp_homeinfo
-from profileapp.api.profiles import bp_profiles
 from profileapp.api.login import bp_login
-from profileapp.api.change_password import bp_change_password
+from profileapp.api.profiles import bp_profiles
 from profileapp.api.user import bp_user
-from flasgger import Swagger
-import logging
+from profileapp.api.recover_token import bp_recover_token
 
 
 def create_app():
@@ -25,11 +28,15 @@ def create_app():
     database.init_app(app)
     commands.init_app(app)
 
+    #setup mail sender
+    mail = Mail(app)
+
+
     CORS(bp_homeinfo)  # enable CORS on the bp_stinfo blue print
     CORS(bp_profiles)
     CORS(bp_login)
-    CORS(bp_change_password)
     CORS(bp_user)
+    CORS(bp_recover_token)
 
     @app.before_first_request
     def create_db():
@@ -39,8 +46,8 @@ def create_app():
     app.register_blueprint(bp_homeinfo)
     app.register_blueprint(bp_profiles)
     app.register_blueprint(bp_login)
-    app.register_blueprint(bp_change_password)
     app.register_blueprint(bp_user)
+    app.register_blueprint(bp_recover_token)
 
     # setup swagger
     swagger = Swagger(app)

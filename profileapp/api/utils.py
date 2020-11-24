@@ -1,4 +1,6 @@
-from profileapp.model import Users, Profile, ProfileUser
+from datetime import datetime
+
+from profileapp.model import Users, Profile, ProfileUser, RecoverUserToken
 import hashlib
 from profileapp.database import db
 from profileapp.Errors import UsersError, ProfileError
@@ -51,6 +53,11 @@ def get_profile_from_user_id(user_id):
     return ProfileUser.query.filter_by(id_user=user_id).first().id_profile
 
 
+def get_email_from_user_id(user_id):
+    validate_user_id_exists(user_id)
+    return Users.query.filter_by(id_user=user_id).first().email
+
+
 def get_id_profile_from_description(profile_description):
     id_profile = Profile.query.filter_by(description=profile_description).first().id_profile
     if id_profile is None:
@@ -88,6 +95,22 @@ def validate_is_google_user(user):
         raise UsersError.UserIsNotGoogleUserError()
 
 
+def validate_is_not_google_user_by_id(user_id):
+    user = Users.query.filter_by(id_user=user_id).first()
+    if user.password is None:
+        raise UsersError.UserIsNotGoogleUserError()
+
+
 def validate_user_not_blocked(user_id):
     if Users.query.filter_by(id_user=user_id).first().blocked:
         raise UsersError.UserIsBlockedError(user_id)
+
+
+def validate_password_recovery(user_id, token):
+    recover_token_entry = RecoverUserToken.query.filter_by(id_user=user_id).first()
+    recover_token_str = recover_token_entry.recover_token
+    time_elapsed = datetime.now() - recover_token_entry.date_created
+    if recover_token_str != token:
+        raise UsersError.UserTokenRecoverError(user_id)
+    if time_elapsed.total_seconds() > 5*60:
+        raise UsersError.UserTokenRecoverExpiredError(user_id)

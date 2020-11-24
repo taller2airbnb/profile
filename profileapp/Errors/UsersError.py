@@ -82,9 +82,33 @@ class UserIsNotGoogleUserError(ProfileAppException):
         super().__init__(self.message, self.error_code)
 
 
+class UserIsGoogleUserError(ProfileAppException):
+    def __init__(self):
+        current_app.logger.error('User register with Google Auth cant recover password')
+        self.message = 'User register with Google Auth cant recover password'
+        self.error_code = 403
+        super().__init__(self.message, self.error_code)
+
+
 class UserIsBlockedError(ProfileAppException):
     def __init__(self, user_info, message="User is blocked: "):
         current_app.logger.error("The user " + str(user_info) + " is blocked.")
+        self.message = message + str(user_info)
+        self.error_code = 403
+        super().__init__(self.message, self.error_code)
+
+
+class UserTokenRecoverError(ProfileAppException):
+    def __init__(self, user_info, message="Token recover invalid"):
+        current_app.logger.error("The token for user: " + str(user_info) + " is invalid.")
+        self.message = message + str(user_info)
+        self.error_code = 403
+        super().__init__(self.message, self.error_code)
+
+
+class UserTokenRecoverExpiredError(ProfileAppException):
+    def __init__(self, user_info, message="Time for token recover expired"):
+        current_app.logger.error("Time for token recover expired for user: " + str(user_info))
         self.message = message + str(user_info)
         self.error_code = 403
         super().__init__(self.message, self.error_code)

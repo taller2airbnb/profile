@@ -43,6 +43,17 @@ class ProfileUser(db.Model):
         return f"User Profile: {self.id_user, self.id_profile}"
 
 
+class RecoverUserToken(db.Model):
+    # __tablename__ = 'profile_user'
+
+    id_user = db.Column(db.Integer, db.ForeignKey('users.id_user'), primary_key=True, nullable=False)
+    recover_token = db.Column(db.String(32), nullable=False)
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    def __repr__(self):
+        return f"Token Generated for user: {self.id_user}"
+
+
 def insert_initial_values():
     if not current_app.config['TESTING']:
         #Profiles
