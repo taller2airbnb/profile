@@ -19,7 +19,7 @@ jobs:
       - run:
           name: Getting up fake endpoints for Google token test
           command: |
-            docker-compose up google
+            docker-compose up -d google
       - run:
           name: Runing test
           command: |
