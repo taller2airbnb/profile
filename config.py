@@ -55,4 +55,4 @@ class TestingWithValidGoogle(Config):
     DEBUG = True
     START_DB = True
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/postgres'
-    GOOGLE_VALIDATOR = "http://project_google_1:3000/valid_token"
+    GOOGLE_VALIDATOR = "http://0.0.0.0:3000/valid_token"
