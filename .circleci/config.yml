@@ -9,12 +9,17 @@ jobs:
           POSTGRES_DB: postgres
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: Install Python deps in a venv
           command: |
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
+      - run:
+          name: Getting up fake endpoints for Google token test
+          command: |
+            docker-compose up google
       - run:
           name: Runing test
           command: |

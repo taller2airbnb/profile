@@ -10,7 +10,8 @@ from profileapp.Errors.ProfileAppException import ProfileAppException
 from flask import current_app
 import json
 import requests
-from profileapp.api import GOOGLE_VALIDATOR, USER_GOOGLE
+#from profileapp.api import GOOGLE_VALIDATOR, USER_GOOGLE
+from profileapp.api import USER_GOOGLE
 
 schema_login_user = {
     'type': 'object',
@@ -101,6 +102,7 @@ def login_google_user(post_data):
     headers = {
         "Authorization": "Bearer " + str(post_data['google_token'])
     }
+    GOOGLE_VALIDATOR = current_app.config['GOOGLE_VALIDATOR']
     response = requests.get(GOOGLE_VALIDATOR, headers=headers)
     response_json = json.loads(response.content)
     validate_google_response(response_json)

@@ -4,6 +4,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
+    GOOGLE_VALIDATOR = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json"
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
@@ -46,3 +47,12 @@ class TestingWithDBConfig(Config):
     DEBUG = True
     START_DB = True
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/postgres'
+
+
+class TestingWithValidGoogle(Config):
+    ENV = "development"
+    TESTING = True
+    DEBUG = True
+    START_DB = True
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/postgres'
+    GOOGLE_VALIDATOR = "http://profile_google_1:3000/valid_token"

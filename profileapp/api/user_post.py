@@ -8,7 +8,8 @@ from flask import request
 
 from profileapp import database
 from profileapp.Errors.ProfileAppException import ProfileAppException
-from profileapp.api import GOOGLE_VALIDATOR, USER_ADMIN, USER_BOOKBNB, USER_GOOGLE
+#from profileapp.api import GOOGLE_VALIDATOR, USER_ADMIN, USER_BOOKBNB, USER_GOOGLE
+from profileapp.api import USER_ADMIN, USER_BOOKBNB, USER_GOOGLE
 from profileapp.api.utils import validate_existent_profile_id, validate_free_user_identifiers, validate_user_password, \
     validate_user_type, \
     validate_user_is_admin, get_id_profile_from_description, validate_google_response
@@ -87,6 +88,7 @@ def register_google_user(post_data):
     headers = {
         "Authorization": "Bearer " + str(post_data['google_token'])
     }
+    GOOGLE_VALIDATOR = current_app.config['GOOGLE_VALIDATOR']
     response = requests.get(GOOGLE_VALIDATOR, headers=headers)
     response_json = json.loads(response.content)
     print(response_json)
