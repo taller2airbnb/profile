@@ -43,6 +43,49 @@ class FlaskTest(unittest.TestCase):
 
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
-        print(data_back)
         self.assertEqual(data_back['Error'], "Some User identifier is already taken: elpepechatruc@gmail.com or ")
         self.assertEqual(status_code, 403)
+
+    def test_fail_register_invalid_google_token(self):
+        tester = create_app(config.TestingWithInvalidGoogle).test_client(self)
+
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ANFITRION,
+                    content_type='application/json')
+
+        tester.post("/user/",
+                    data=json.dumps({'google_token': 'untokeeeen', 'user_type': 'googleuser', 'profile': 1}),
+                    content_type='application/json')
+
+        response = tester.post("/user/",
+                               data=json.dumps({'google_token': 'untokeeeen', 'user_type': 'googleuser', 'profile': 1}),
+                               content_type='application/json')
+
+        status_code = response.status_code
+        data_back = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data_back['Error'], "Not able to validate token with GoogleAPI")
+        self.assertEqual(status_code, 401)
+
+    def test_successful_register_login_google(self):
+        tester = create_app(config.TestingWithValidGoogle).test_client(self)
+
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ANFITRION,
+                    content_type='application/json')
+
+        response = tester.post("/user/",
+                               data=json.dumps({'google_token': 'untokeeeen', 'user_type': 'googleuser', 'profile': 1}),
+                               content_type='application/json')
+
+        status_code = response.status_code
+        data_back = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data_back['id'], 1)
+        self.assertEqual(status_code, 200)
+
+        response = tester.post("/login/",
+                               data=json.dumps({'google_token': 'untokeeeen', 'user_type': 'googleuser', 'profile': 1}),
+                               content_type='application/json')
+        status_code = response.status_code
+        data_back = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data_back['id'], 1)
+        self.assertEqual(status_code, 200)

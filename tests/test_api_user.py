@@ -359,3 +359,35 @@ class FlaskTest(unittest.TestCase):
         data_back_admin = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back_admin['Error'], "The User: 1 is not an admin")
         self.assertEqual(status_code, 403)
+
+
+    def test_get_all_users_info_successfully(self):
+        tester = create_app().test_client(self)
+
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ADMIN,
+                    content_type='application/json')
+
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ANFITRION,
+                    content_type='application/json')
+
+        tester.post("/user/",
+                    data=VALID_ADMIN1_REGISTER,
+                    content_type='application/json')
+
+        tester.post("/user/",
+                    data=VALID_ANFITRION1_REGISTER,
+                    content_type='application/json')
+
+        response = tester.get("/user/")
+
+        status_code = response.status_code
+        data_back = json.loads(response.get_data(as_text=True))
+        test_user = json.loads(VALID_ADMIN1_REGISTER)
+        test_user_anf = json.loads(VALID_ANFITRION1_REGISTER)
+        print(data_back)
+        self.assertEqual(data_back['status'], 'success')
+        self.assertEqual(data_back['data']['users'][0]['last_name'], test_user['last_name'])
+        self.assertEqual(data_back['data']['users'][1]['last_name'], test_user_anf['last_name'])
+        self.assertEqual(status_code, 200)

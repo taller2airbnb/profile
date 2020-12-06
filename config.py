@@ -33,14 +33,6 @@ class DevelopmentInDockerConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@profile_db_1:5432/postgres'
 
 
-class TestingWithoutDBConfig(Config):
-    ENV = "development"
-    TESTING = True
-    DEBUG = True
-    START_DB = False
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/postgres'
-
-
 class TestingWithDBConfig(Config):
     ENV = "development"
     TESTING = True
@@ -49,10 +41,13 @@ class TestingWithDBConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/postgres'
 
 
-class TestingWithValidGoogle(Config):
-    ENV = "development"
-    TESTING = True
-    DEBUG = True
-    START_DB = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:postgres@localhost:5432/postgres'
+class TestingWithoutDBConfig(TestingWithDBConfig):
+    START_DB = False
+
+
+class TestingWithValidGoogle(TestingWithDBConfig):
     GOOGLE_VALIDATOR = "http://localhost:3000/valid_token"
+
+
+class TestingWithInvalidGoogle(TestingWithDBConfig):
+    GOOGLE_VALIDATOR = "http://localhost:3000/invalid_token"
