@@ -3,7 +3,7 @@ jobs:
   test:
     docker:
       - image: circleci/python:3.6.4 # every job must define an image for the docker executor and subsequent jobs may define a different image.
-      - image: fxmr/mock_server
+      - image: fxmr/mock_server:profile_google
         auth:
           username: fxmr  # can specify string literal values
           password: $DOCKERHUB_PASSWORD  # or project environment variable reference
