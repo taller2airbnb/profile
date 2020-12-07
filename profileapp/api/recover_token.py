@@ -1,5 +1,6 @@
 import secrets
 from datetime import datetime
+from threading import Thread
 
 from flasgger.utils import swag_from
 from flask import Blueprint
@@ -54,11 +55,7 @@ def generate_recover_token(user_id):
 
         commit_new_recover_user_token(recover_user_token, user_id)
 
-        with current_app.app_context():
-            mail = Mail()
-            msg = Message("Token for Bookbnb", recipients=recipient)
-            msg.body = recover_user_token.recover_token
-            mail.send(msg)
+        FlaskThread(target=send_async_email, args=(recipient, recover_user_token.recover_token)).start()
 
     except ProfileAppException as e:
         current_app.logger.error("Generation of token for user failed.")
@@ -66,6 +63,24 @@ def generate_recover_token(user_id):
 
     current_app.logger.info('Token for user ' + str(user_id) + ' successfully created.')
     return jsonify({'id': str(user_id), 'Description': 'Generated'}), 200
+
+
+def send_async_email(recipient, token):
+    with current_app.app_context():
+        mail = Mail()
+        msg = Message("Token for Bookbnb", recipients=recipient)
+        msg.body = token
+        mail.send(msg)
+
+
+class FlaskThread(Thread):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.app = current_app._get_current_object()
+
+    def run(self):
+        with self.app.app_context():
+            super().run()
 
 
 def generate_new_recover_user_token(user_id):
