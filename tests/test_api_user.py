@@ -350,7 +350,8 @@ class FlaskTest(unittest.TestCase):
                     content_type='application/json')
 
         response = tester.post("/user/",
-                               data=json.dumps({'user_type': 'admin', 'first_name': 'Jorge', 'last_name': 'Paez', 'email': 'algo2@algo.com', 'password': '123456789',
+                               data=json.dumps({'user_type': 'admin', 'first_name': 'Jorge', 'last_name': 'Paez',
+                                                'email': 'algo2@algo.com', 'password': '123456789',
                                                 'national_id': '123478', 'national_id_type': 'DNI',
                                                 'alias': 'Jorgejo', 'user_logged_id': 1, 'profile': 0}),
                                content_type='application/json')
@@ -359,7 +360,6 @@ class FlaskTest(unittest.TestCase):
         data_back_admin = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back_admin['Error'], "The User: 1 is not an admin")
         self.assertEqual(status_code, 403)
-
 
     def test_get_all_users_info_successfully(self):
         tester = create_app().test_client(self)
@@ -391,3 +391,16 @@ class FlaskTest(unittest.TestCase):
         self.assertEqual(data_back['data']['users'][0]['last_name'], test_user['last_name'])
         self.assertEqual(data_back['data']['users'][1]['last_name'], test_user_anf['last_name'])
         self.assertEqual(status_code, 200)
+
+    def test_block_non_register_user_fails(self):
+        # Login with anfitrion and try to create admin must fail
+        tester = create_app().test_client(self)
+
+        response = tester.put("/user/1/blocked_status/",
+                              data=json.dumps({'new_status': True}),
+                              content_type='application/json')
+
+        status_code = response.status_code
+        data_back_admin = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data_back_admin['Error'], "Not exists User: 1")
+        self.assertEqual(status_code, 404)
