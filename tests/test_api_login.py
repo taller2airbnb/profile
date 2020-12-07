@@ -21,18 +21,18 @@ class FlaskTest(unittest.TestCase):
                     data=VALID_PROFILE_ADMIN,
                     content_type='application/json')
 
-        tester.post("/register/",
+        tester.post("/user/",
                     data=VALID_ADMIN1_REGISTER,
                     content_type='application/json')
 
         response = tester.post("/login/",
-                               data=json.dumps({'email': 'algo@algo.com', 'password': ''}),
+                               data=json.dumps({'user_type': 'bookbnb', 'email': 'algo@algo.com', 'password': ''}),
                                content_type='application/json')
 
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], "User Password must not be empty")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 409)
 
     def test_valid_user_login_successful(self):
         tester = create_app().test_client(self)
@@ -41,7 +41,7 @@ class FlaskTest(unittest.TestCase):
                     data=VALID_PROFILE_ADMIN,
                     content_type='application/json')
 
-        tester.post("/register/",
+        tester.post("/user/",
                     data=VALID_ADMIN1_REGISTER,
                     content_type='application/json')
 
@@ -61,12 +61,13 @@ class FlaskTest(unittest.TestCase):
         tester = create_app().test_client(self)
 
         response = tester.post("/login/",
-                               data=json.dumps({'email': 'algo@algo.com', 'password': '123456789'}),
+                               data=json.dumps(
+                                   {'user_type': 'bookbnb', 'email': 'algo@algo.com', 'password': '123456789'}),
                                content_type='application/json')
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], "The email: algo@algo.com is not registered")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 401)
 
     def test_login_unsuccessful_wrong_password(self):
         tester = create_app().test_client(self)
@@ -75,15 +76,45 @@ class FlaskTest(unittest.TestCase):
                     data=VALID_PROFILE_ADMIN,
                     content_type='application/json')
 
-        tester.post("/register/",
+        tester.post("/user/",
                     data=VALID_ADMIN1_REGISTER,
                     content_type='application/json')
 
         response = tester.post("/login/",
-                               data=json.dumps({'email': 'algo@algo.com', 'password': 'otropassword'}),
+                               data=json.dumps(
+                                   {'user_type': 'bookbnb', 'email': 'algo@algo.com', 'password': 'otropassword'}),
                                content_type='application/json')
 
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], "User Password is invalid")
-        self.assertEqual(status_code, 400)
+        self.assertEqual(status_code, 401)
+
+    def test_login_unsuccessful_blocked_user(self):
+        tester = create_app().test_client(self)
+
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ADMIN,
+                    content_type='application/json')
+
+        tester.post("/user/",
+                    data=VALID_ADMIN1_REGISTER,
+                    content_type='application/json')
+
+        response = tester.put("/user/1/blocked_status/",
+                              data=json.dumps({'new_status': True}),
+                              content_type='application/json')
+
+        status_code = response.status_code
+        data_back = json.loads(response.get_data(as_text=True))
+        print(status_code, data_back)
+
+        response = tester.post("/login/",
+                               data=VALID_ADMIN1_LOGIN,
+                               content_type='application/json')
+
+        status_code = response.status_code
+        data_back = json.loads(response.get_data(as_text=True))
+        print(status_code, data_back)
+        self.assertEqual(data_back['Error'], "User is blocked: 1")
+        self.assertEqual(status_code, 403)

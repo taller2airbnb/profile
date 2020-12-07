@@ -1,41 +1,45 @@
-import profileapp.model
-import profileapp.database
-import profileapp.commands
+import logging
 import os
+
+from flasgger import Swagger
 from flask import Flask
 from flask_cors import CORS
+from flask_mail import Mail
+
+import profileapp.commands
+import profileapp.database
+import profileapp.model
 from profileapp.api.home_info import bp_homeinfo
-from profileapp.api.register import bp_register
-from profileapp.api.register_admin import bp_register_admin
-from profileapp.api.profiles import bp_profiles
 from profileapp.api.login import bp_login
-from profileapp.api.change_password import bp_change_password
-from profileapp.api.google_auth import bp_google_auth
+from profileapp.api.profiles import bp_profiles
 from profileapp.api.user import bp_user
-from flasgger import Swagger
-import logging
+from profileapp.api.recover_token import bp_recover_token
 
 
-def create_app():
+def create_app(my_config=None):
     # setup app
     app = Flask(__name__)
     # setup CORS
     cors = CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
     # setup with the configuration provided by the user / environment
-    app.config.from_object(os.environ['APP_SETTINGS'])
+    if my_config is None:
+        app.config.from_object(os.environ['APP_SETTINGS'])
+    else:
+        app.config.from_object(my_config)
     # setup all our dependencies, for now only database using application factory pattern
     database.init_app(app)
     commands.init_app(app)
 
+    #setup mail sender
+    mail = Mail(app)
+
+
     CORS(bp_homeinfo)  # enable CORS on the bp_stinfo blue print
-    CORS(bp_register)
-    CORS(bp_register_admin)
     CORS(bp_profiles)
     CORS(bp_login)
-    CORS(bp_change_password)
-    CORS(bp_google_auth)
     CORS(bp_user)
+    CORS(bp_recover_token)
 
     @app.before_first_request
     def create_db():
@@ -43,13 +47,10 @@ def create_app():
         model.insert_initial_values()
 
     app.register_blueprint(bp_homeinfo)
-    app.register_blueprint(bp_register)
-    app.register_blueprint(bp_register_admin)
     app.register_blueprint(bp_profiles)
     app.register_blueprint(bp_login)
-    app.register_blueprint(bp_change_password)
-    app.register_blueprint(bp_google_auth)
     app.register_blueprint(bp_user)
+    app.register_blueprint(bp_recover_token)
 
     # setup swagger
     swagger = Swagger(app)

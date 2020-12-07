@@ -1,41 +1,101 @@
-from profileapp import database
-from profileapp.model import Users
-from flask import request
-from flask import Blueprint
-from flask import jsonify
-from flask_expects_json import expects_json
-from profileapp.api.utils import validate_user_id_exists, validate_modify_schema_not_empty
 from flasgger.utils import swag_from
-from profileapp.Errors.ProfileAppException import ProfileAppException
-from flask import current_app
+from flask import Blueprint
+from flask_expects_json import expects_json
 
-schema_modify_user = {
-    'type': 'object',
-    'properties': {
-        'first_name': {'type': 'string'},
-        'last_name': {'type': 'string'},
-        'national_id': {'type': 'string'},
-        'national_id_type': {'type': 'string'},
-        'id': {'type': 'integer'}
-    },
-    'required': ['id']}
-
-schema_id = {
-    'type': 'object',
-    'properties': {
-        'id': {'type': 'integer'}
-    },
-    'required': ['id']
-    }
-
+from profileapp.api.user_get import get_fields_from_users, get_fields_from_user
+from profileapp.api.user_post import register_new_user, schema_new_user
+from profileapp.api.user_put import modify_user, schema_modify_user, blocked_status, new_password
 
 bp_user = Blueprint('user', __name__, url_prefix='/user/')
 
 
-@bp_user.route("/modify/", methods=['POST'])
+@bp_user.route("/", methods=['POST'])
 @swag_from(methods=['POST'])
+@expects_json(schema_new_user)
+def register_new_user_api():
+    """
+    Register a new user
+    The new user has to fulfill the required fields by type
+    ---
+    tags:
+      - user
+    consumes:
+      - application/json
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+            required:
+              - user_type
+              - first_name
+              - last_name
+              - email
+              - national_id
+              - national_id_type
+              - alias
+              - password
+              - profile
+              - google_token
+            properties:
+              user_type:
+                type: string
+                description: REQUIRED - Type of user in registration - BookBnb, Admin or GoogleUser
+              first_name:
+                type: string
+                description: First name of the new user - BookBnb, Admin
+              last_name:
+                type: string
+                description: Last name of the new user - BookBnb, Admin
+              email:
+                type: string
+                description: Unique email representing the new user - BookBnb, Admin
+              national_id:
+                type: string
+                description: National ID of the new user - BookBnb, Admin
+              national_id_type:
+                type: string
+                description: National ID Type of the new user - BookBnb, Admin
+              alias:
+                type: string
+                description: Unique alias representing the new user - BookBnb, Admin
+              password:
+                type: string
+                description: Password of the new user - BookBnb, Admin
+              profile:
+                type: integer
+                description: REQUIRED - Profile of the new user, has to be an existing one (check /profiles/) - All Type of Users
+              google_token:
+                type: string
+                description: identifier representing a google user - GoogleUser
+              user_logged_id:
+                type: integer
+                description: Id of the user that creates the admin. - Admin
+    responses:
+      200:
+        description: A successful profile creation
+        schema:
+          properties:
+              email:
+                type: string
+                description: Unique email of the created user
+              alias:
+                type: string
+                description: Unique alias of the created user
+              id:
+                type: integer
+                description: Unique identifier of the created user
+              name:
+                type: string
+                description: Name of the created user
+    """
+    return register_new_user()
+
+
+@bp_user.route("/", methods=['PUT'])
+@swag_from(methods=['PUT'])
 @expects_json(schema_modify_user)
-def modify_user():
+def modify_user_api():
     """
     Modifies a user's name or national ID fields.
     No specific field is required but at least one must not be empty.
@@ -79,117 +139,171 @@ def modify_user():
                 type: string
                 description: Validation, expected 'Ok'.
     """
-    # @expects_json(schema_new_user)
-    # if payload is invalid, request will be aborted with error code 400
-    # if payload is valid it is stored in g.data
-    post_data = request.get_json()
-    non_mandatory_fields = schema_modify_user['properties'].keys() - schema_modify_user['required']
-    current_app.logger.info('Modifying user: ' + str(post_data['id']))
-
-    try:
-        validate_user_id_exists(post_data['id'])
-        validate_modify_schema_not_empty(post_data, non_mandatory_fields)
-    except ProfileAppException as e:
-        current_app.logger.error("Modification for user " + str(post_data['id']) + " failed.")
-        return jsonify({'Error': e.message}), 400
-
-    user = Users.query.filter_by(id_user=post_data['id']).first()
-
-    if 'first_name' in post_data:
-        # change first name
-        user.first_name = post_data['first_name']
-    if 'last_name' in post_data:
-        # change last name
-        user.last_name = post_data['last_name']
-    if 'national_id' in post_data:
-        # change national id
-        user.national_id = post_data['national_id']
-    if 'national_id_type' in post_data:
-        # change national id type
-        user.national_id_type = post_data['national_id_type']
-
-    try:
-        # commit to persist into the database
-        database.db.session.commit()
-    except:
-        current_app.logger.error("Error when attempting to modify user " + str(post_data['id']) + " in the database.")
-        return jsonify({'Error': "Something happened when attempting to modify user in the Database"}), 400
-
-    current_app.logger.info("Modification for user with id " + str(post_data['id']) + " succeeded.")
-    return jsonify({'id': user.id_user, 'modify_user': 'OK'}), 200
+    return modify_user()
 
 
-@bp_user.route("/data/", methods=['GET'])
-@swag_from(methods=['GET'])
-@expects_json(schema_id)
-def get_fields_from_user():
+@bp_user.route("/<int:user_id>/blocked_status/", methods=['PUT'])
+@swag_from(methods=['PUT'])
+def blocked_status_api(user_id):
     """
-    Get fields from user
-    Profile id and description is going to be given
+    Change Blocked status for user's by id
     ---
     tags:
       - user
     consumes:
       - application/json
     parameters:
+      - in: path
+        name: user_id
+        type: integer
+        required: true
       - name: body
         in: body
         required: true
         schema:
             required:
-              - id
+              - new_status
             properties:
-              id:
-                type: integer
-                description: Unique identifier for user whose fields we want to get.
+              new_status:
+                type: boolean
+                description: New blocked status.
     responses:
       200:
-        description: Successful get data request.
+        description: A successful change of user blocked status.
         schema:
           properties:
-              id:
+              user_id:
                 type: integer
-                description: Unique identifier of the requested user.
-              first_name:
+                description: Unique identifier representing the user.
+              block_user:
                 type: string
-                description: Name of the requested user.
-              last_name:
+                description: Expected 'Blocked'.
+    """
+    return blocked_status(user_id)
+
+
+@bp_user.route("/<int:user_id>/password/", methods=['PUT'])
+@swag_from(methods=['PUT'])
+def new_password_api(user_id):
+    """
+    Change Password for user's by id and token
+    ---
+    tags:
+      - user
+    consumes:
+      - application/json
+    parameters:
+      - in: path
+        name: user_id
+        type: integer
+        required: true
+      - name: body
+        in: body
+        required: true
+        schema:
+            required:
+              - token
+              - new_password
+            properties:
+              token:
                 type: string
-                description: Last name of the requested user.
-              alias:
+                description: Token for validate new password.
+              new_password:
                 type: string
-                description: Alias of the requested user.
+                description: New password.
+    responses:
+      200:
+        description: A successful change of user blocked status.
+        schema:
+          properties:
+              user_id:
+                type: integer
+                description: Unique identifier representing the user.
+              block_user:
+                type: string
+                description: Expected 'Blocked'.
+    """
+    return new_password(user_id)
+
+
+@bp_user.route("/<int:id>", methods=['GET'])
+@swag_from(methods=['GET'])
+def get_fields_from_user_api(id):
+    """
+    Get fields from user
+    Profile id and description is going to be given
+    ---
+    tags:
+      - user
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+    responses:
+      200:
+        description: A single user info
+        schema:
+          properties:
               email:
                 type: string
-                description: Unique email of the requested user.
+                description: Unique email of the created user
+              alias:
+                type: string
+                description: Unique alias of the created user
+              id:
+                type: integer
+                description: Unique identifier of the created user
+              first_name:
+                type: string
+                description: first name of the created user
+              last_name:
+                type: string
+                description: last name of the created user
               national_id:
                 type: string
-                description: National ID of the requested user.
+                description: national id
               national_id_type:
                 type: string
-                description: National ID type of the requested user.
+                description: national id type
     """
-    get_data = request.get_json()
-    current_app.logger.info('Getting info from user: ' + str(get_data['id']))
-
-    try:
-        validate_user_id_exists(get_data['id'])
-    except ProfileAppException as e:
-        current_app.logger.error("Getting info from user " + str(get_data['id']) + " failed.")
-        return jsonify({'Error': e.message}), 400
-
-    user = Users.query.filter_by(id_user=get_data['id']).first()
-
-    response_object = {
-        'id': user.id_user,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'alias': user.alias,
-        'email': user.email,
-        'national_id': user.national_id,
-        'national_id_type': user.national_id_type
-    }
-    current_app.logger.info('Obtained info from user: ' + str(get_data['id']) + ' successfully.')
-    return jsonify(response_object), 200
+    return get_fields_from_user(id)
 
 
+@bp_user.route("/", methods=['GET'])
+@swag_from(methods=['GET'])
+def get_fields_from_users_api():
+    """
+    Get fields from user
+    Profile id and description is going to be given
+    ---
+    tags:
+      - user
+    responses:
+      200:
+        description: A single user info
+        schema:
+          properties:
+              email:
+                type: string
+                description: Unique email of the created user
+              alias:
+                type: string
+                description: Unique alias of the created user
+              id:
+                type: integer
+                description: Unique identifier of the created user
+              first_name:
+                type: string
+                description: first name of the created user
+              last_name:
+                type: string
+                description: last name of the created user
+              national_id:
+                type: string
+                description: national id
+              national_id_type:
+                type: string
+                description: national id type
+    """
+    return get_fields_from_users()

@@ -23,3 +23,11 @@ services:
       - db
     ports:
       - "5000:5000"
+  google:
+    build:
+      context: ${PWD}
+      dockerfile: ./mockGoogleServer/Dockerfile
+    environment:
+      PORT: 3000
+    ports:
+      - "3000:3000"
