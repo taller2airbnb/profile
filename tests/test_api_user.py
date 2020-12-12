@@ -387,9 +387,8 @@ class FlaskTest(unittest.TestCase):
         test_user = json.loads(VALID_ADMIN1_REGISTER)
         test_user_anf = json.loads(VALID_ANFITRION1_REGISTER)
         print(data_back)
-        self.assertEqual(data_back['status'], 'success')
-        self.assertEqual(data_back['data']['users'][0]['last_name'], test_user['last_name'])
-        self.assertEqual(data_back['data']['users'][1]['last_name'], test_user_anf['last_name'])
+        self.assertEqual(data_back['users'][0]['last_name'], test_user['last_name'])
+        self.assertEqual(data_back['users'][1]['last_name'], test_user_anf['last_name'])
         self.assertEqual(status_code, 200)
 
     def test_block_non_register_user_fails(self):

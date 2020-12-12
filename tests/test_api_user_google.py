@@ -132,7 +132,7 @@ class FlaskTest(unittest.TestCase):
         self.assertEqual(data_back['id'], 1)
         self.assertEqual(status_code, 200)
 
-        response = tester.post("/recover_token/1")
+        response = tester.post("/recover_token/elpepechatruc@gmail.com")
         status_code = response.status_code
         data_back = json.loads(response.get_data(as_text=True))
         self.assertEqual(data_back['Error'], 'User register with Google Auth cant recover password')
