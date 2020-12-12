@@ -50,10 +50,7 @@ def get_fields_from_users():
         users_list.append(user_object)
 
     response_object = {
-        'status': 'success',
-        'data': {
             'users': users_list
-        }
     }
 
     current_app.logger.info('Obtained info from users successfully.')

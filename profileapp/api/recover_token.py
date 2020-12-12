@@ -10,15 +10,16 @@ from flask_mail import Message, Mail
 
 from profileapp import database
 from profileapp.Errors.ProfileAppException import ProfileAppException
-from profileapp.api.utils import validate_user_id_exists, get_email_from_user_id, validate_is_not_google_user_by_id
+from profileapp.api.utils import validate_user_id_exists, get_email_from_user_id, validate_is_not_google_user_by_id, \
+    validate_existent_user_by_mail, get_user_id_from_mail
 from profileapp.model import RecoverUserToken
 
 bp_recover_token = Blueprint('recover_token', __name__, url_prefix='/recover_token/')
 
 
-@bp_recover_token.route("/<int:user_id>", methods=['POST'])
+@bp_recover_token.route("/<string:user_mail>", methods=['POST'])
 @swag_from(methods=['POST'])
-def generate_recover_token(user_id):
+def generate_recover_token(user_mail):
     """
     Create a new profile
     Profile id and description is needed
@@ -30,27 +31,28 @@ def generate_recover_token(user_id):
     parameters:
     parameters:
       - in: path
-        name: user_id
-        type: integer
+        name: user_mail
+        type: string
         required: true
     responses:
       200:
         description: A successful token recover creation
         schema:
           properties:
-              id:
-                type: integer
-                description: Unique identifier representing a profile description
+              mail:
+                type: string
+                description: Unique mail representing a profile description
               description:
                 type: string
                 description: representing a description
     """
-    current_app.logger.info('Generating user token recover for user: ' + str(user_id))
+    current_app.logger.info('Generating user token recover for user: ' + user_mail)
 
     try:
-        validate_user_id_exists(user_id)
+        validate_existent_user_by_mail(user_mail)
+        user_id = get_user_id_from_mail(user_mail)
         validate_is_not_google_user_by_id(user_id)
-        recipient = [get_email_from_user_id(user_id)]
+        recipient = [user_mail]
         recover_user_token = generate_new_recover_user_token(user_id)
 
         commit_new_recover_user_token(recover_user_token, user_id)
