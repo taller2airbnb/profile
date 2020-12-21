@@ -182,9 +182,9 @@ def blocked_status_api(user_id):
     return blocked_status(user_id)
 
 
-@bp_user.route("/<int:user_id>/password/", methods=['PUT'])
+@bp_user.route("/<string:user_mail>/password/", methods=['PUT'])
 @swag_from(methods=['PUT'])
-def new_password_api(user_id):
+def new_password_api(user_mail):
     """
     Change Password for user's by id and token
     ---
@@ -194,8 +194,8 @@ def new_password_api(user_id):
       - application/json
     parameters:
       - in: path
-        name: user_id
-        type: integer
+        name: user_mail
+        type: string
         required: true
       - name: body
         in: body
@@ -216,14 +216,14 @@ def new_password_api(user_id):
         description: A successful change of user blocked status.
         schema:
           properties:
-              user_id:
-                type: integer
-                description: Unique identifier representing the user.
+              user_mail:
+                type: string
+                description: Unique mail representing the user.
               block_user:
                 type: string
                 description: Expected 'Blocked'.
     """
-    return new_password(user_id)
+    return new_password(user_mail)
 
 
 @bp_user.route("/<int:id>", methods=['GET'])

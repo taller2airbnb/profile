@@ -58,6 +58,11 @@ def get_email_from_user_id(user_id):
     return Users.query.filter_by(id_user=user_id).first().email
 
 
+def get_user_id_from_mail(user_mail):
+    validate_existent_user_by_mail(user_mail)
+    return Users.query.filter_by(email=user_mail).first().id_user
+
+
 def get_id_profile_from_description(profile_description):
     id_profile = Profile.query.filter_by(description=profile_description).first().id_profile
     if id_profile is None:

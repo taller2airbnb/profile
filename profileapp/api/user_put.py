@@ -7,7 +7,7 @@ from flask import request
 from profileapp import database
 from profileapp.Errors.ProfileAppException import ProfileAppException
 from profileapp.api.utils import validate_user_id_exists, validate_modify_schema_not_empty, validate_user_password, \
-    validate_password_recovery
+    validate_password_recovery, validate_existent_user_by_mail, get_user_id_from_mail
 from profileapp.model import Users
 
 schema_modify_user = {
@@ -84,16 +84,17 @@ def blocked_status(user_id):
     return jsonify({'id': user.id_user, 'modify_user': 'OK'}), 200
 
 
-def new_password(user_id):
+def new_password(user_mail):
     user_new_password_plain = (request.get_json())['new_password']
     user_new_password = hashlib.md5(user_new_password_plain.encode()).hexdigest()
 
     token = (request.get_json())['token']
 
-    current_app.logger.info('Initializing password recovery for user: ' + str(user_id))
+    current_app.logger.info('Initializing password recovery for user: ' + user_mail)
     try:
         validate_user_password(user_new_password)
-        validate_user_id_exists(user_id)
+        validate_existent_user_by_mail(user_mail)
+        user_id = get_user_id_from_mail(user_mail)
         validate_password_recovery(user_id, token)
     except ProfileAppException as e:
         current_app.logger.error("Block user " + str(user_id) + " failed.")
