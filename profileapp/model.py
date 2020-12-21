@@ -66,10 +66,19 @@ def insert_initial_values():
         if password is None:
             password = 'test'
         password = hashlib.md5(password.encode()).hexdigest()
-        db.session.add(Users(first_name='norbert', last_name='degoas', email='buenosaires@elcondor.mardelplata',
+        db.session.add(Users(first_name='Norbert', last_name='Degoas', email='buenosaires@elcondor.mardelplata',
                              password=password, national_id='99999999', national_id_type='DNI',
                              alias='norbertdegoas'))
+        db.session.add(Users(first_name='Steven', last_name='Seagal', email='steven@seagal.com',
+                             password=password, national_id='88888888', national_id_type='DNI',
+                             alias='stevenseagal'))
+        db.session.add(Users(first_name='John', last_name='McClane', email='hard@to.kill',
+                             password=password, national_id='77777777', national_id_type='DNI',
+                             alias='hradtokill'))
         db.session.commit()
         # Profile User
         db.session.add(ProfileUser(id_user=1, id_profile=0))
+        db.session.add(ProfileUser(id_user=2, id_profile=1))
+        db.session.add(ProfileUser(id_user=3, id_profile=2))
         db.session.commit()
+
