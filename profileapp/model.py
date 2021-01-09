@@ -74,11 +74,15 @@ def insert_initial_values():
                              alias='stevenseagal'))
         db.session.add(Users(first_name='John', last_name='McClane', email='hard@to.kill',
                              password=password, national_id='77777777', national_id_type='DNI',
-                             alias='hradtokill'))
+                             alias='hardtokill'))
+        db.session.add(Users(first_name='Michael', last_name='Scott', email='michael@scott.com',
+                             password=password, national_id='77777777', national_id_type='DNI',
+                             alias='michaelscott'))
         db.session.commit()
         # Profile User
         db.session.add(ProfileUser(id_user=1, id_profile=0))
         db.session.add(ProfileUser(id_user=2, id_profile=1))
         db.session.add(ProfileUser(id_user=3, id_profile=2))
+        db.session.add(ProfileUser(id_user=4, id_profile=2))
         db.session.commit()
 
