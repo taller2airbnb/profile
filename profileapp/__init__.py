@@ -31,9 +31,8 @@ def create_app(my_config=None):
     database.init_app(app)
     commands.init_app(app)
 
-    #setup mail sender
+    # setup mail sender
     mail = Mail(app)
-
 
     CORS(bp_homeinfo)  # enable CORS on the bp_stinfo blue print
     CORS(bp_profiles)

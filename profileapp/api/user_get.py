@@ -24,7 +24,8 @@ def get_fields_from_user(id):
         'email': user.email,
         'national_id': user.national_id,
         'national_id_type': user.national_id_type,
-        'blocked': user.blocked
+        'blocked': user.blocked,
+        'push_token': user.push_token
     }
     current_app.logger.info('Obtained info from user: ' + str(id) + ' successfully.')
     return jsonify(response_object), 200
@@ -45,7 +46,8 @@ def get_fields_from_users():
             'email': user.email,
             'national_id': user.national_id,
             'national_id_type': user.national_id_type,
-            'blocked': user.blocked
+            'blocked': user.blocked,
+            'push_token': user.push_token
         }
         users_list.append(user_object)
 

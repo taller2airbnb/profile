@@ -18,6 +18,7 @@ class Users(db.Model):
     password = db.Column(db.String(255))
     blocked = db.Column(db.BOOLEAN, default=False)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    push_token = db.Column(db.String(255))
 
     def __repr__(self):
         return f"User: {self.first_name}"

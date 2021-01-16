@@ -114,3 +114,25 @@ def new_password(user_mail):
     return jsonify({'id': user.id_user, 'modify_user': 'OK'}), 200
 
 
+def add_push_token(user_id):
+    new_status = (request.get_json())['push_token']
+    current_app.logger.info('Adding push token for user: ' + str(user_id))
+    try:
+        validate_user_id_exists(user_id)
+    except ProfileAppException as e:
+        current_app.logger.error("Adding push token for user: " + str(user_id) + " failed.")
+        return jsonify({'Error': e.message}), e.error_code
+
+    user = Users.query.filter_by(id_user=user_id).first()
+
+    user.push_token = new_status
+
+    try:
+        # commit to persist into the database
+        database.db.session.commit()
+    except:
+        current_app.logger.error("Error when attempting to add push token user " + str(user_id) + " in the database.")
+        return jsonify({'Error': "Something happened when attempting to add push token user in the Database"}), 400
+
+    current_app.logger.info("Adding push token for user with id " + str(user_id) + " succeeded.")
+    return jsonify({'id': user.id_user, 'modify_user': 'OK'}), 200

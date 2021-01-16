@@ -4,7 +4,7 @@ from flask_expects_json import expects_json
 
 from profileapp.api.user_get import get_fields_from_users, get_fields_from_user
 from profileapp.api.user_post import register_new_user, schema_new_user
-from profileapp.api.user_put import modify_user, schema_modify_user, blocked_status, new_password
+from profileapp.api.user_put import modify_user, schema_modify_user, blocked_status, new_password, add_push_token
 
 bp_user = Blueprint('user', __name__, url_prefix='/user/')
 
@@ -307,3 +307,43 @@ def get_fields_from_users_api():
                 description: national id type
     """
     return get_fields_from_users()
+
+
+@bp_user.route("/<int:user_id>/push_token/", methods=['PUT'])
+@swag_from(methods=['PUT'])
+def add_push_token_api(user_id):
+    """
+    Change Push Token for user's by id
+    ---
+    tags:
+      - user
+    consumes:
+      - application/json
+    parameters:
+      - in: path
+        name: user_id
+        type: integer
+        required: true
+      - name: body
+        in: body
+        required: true
+        schema:
+            required:
+              - push_token
+            properties:
+              push_token:
+                type: string
+                description: New push token.
+    responses:
+      200:
+        description: A successful change of user blocked status.
+        schema:
+          properties:
+              user_id:
+                type: integer
+                description: Unique identifier representing the user.
+              push_token:
+                type: string
+                description: token
+    """
+    return add_push_token(user_id)
