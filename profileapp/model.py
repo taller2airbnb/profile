@@ -45,7 +45,6 @@ class ProfileUser(db.Model):
 
 
 class RecoverUserToken(db.Model):
-    # __tablename__ = 'profile_user'
 
     id_user = db.Column(db.Integer, db.ForeignKey('users.id_user'), primary_key=True, nullable=False)
     recover_token = db.Column(db.String(32), nullable=False)
@@ -53,6 +52,16 @@ class RecoverUserToken(db.Model):
 
     def __repr__(self):
         return f"Token Generated for user: {self.id_user}"
+
+
+class APIKeyToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name_from = db.Column(db.String(80), nullable=False)
+    api_key_token = db.Column(db.String(32), nullable=False)
+    active = db.Column(db.BOOLEAN, default=False)
+
+    def __repr__(self):
+        return f"Api Token Generated for: {self.name_from}"
 
 
 def insert_initial_values():
@@ -86,4 +95,17 @@ def insert_initial_values():
         db.session.add(ProfileUser(id_user=3, id_profile=2))
         db.session.add(ProfileUser(id_user=4, id_profile=2))
         db.session.commit()
+
+        api_token_bc = os.environ.get('API_BC')
+        if password is None:
+            api_token_bc = 'test'
+
+        api_token_bo = os.environ.get('API_BO')
+        if password is None:
+            api_token_bo = 'test'
+
+        db.session.add(APIKeyToken(id=0, name_from='BusinessCore', api_key_token=api_token_bc, active=True))
+        db.session.add(APIKeyToken(id=0, name_from='BackOffice', api_key_token=api_token_bo, active=True))
+        db.session.commit()
+
 

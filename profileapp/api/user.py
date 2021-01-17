@@ -2,6 +2,7 @@ from flasgger.utils import swag_from
 from flask import Blueprint
 from flask_expects_json import expects_json
 
+from profileapp.api.api_validator import require_appkey
 from profileapp.api.user_get import get_fields_from_users, get_fields_from_user
 from profileapp.api.user_post import register_new_user, schema_new_user
 from profileapp.api.user_put import modify_user, schema_modify_user, blocked_status, new_password, add_push_token
@@ -310,6 +311,7 @@ def get_fields_from_users_api():
 
 
 @bp_user.route("/<int:user_id>/push_token/", methods=['PUT'])
+@require_appkey
 @swag_from(methods=['PUT'])
 def add_push_token_api(user_id):
     """
