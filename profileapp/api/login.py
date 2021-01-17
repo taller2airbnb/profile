@@ -1,3 +1,4 @@
+from profileapp.api.api_validator import require_appkey
 from profileapp.model import Users, ProfileUser
 from flask import request
 from flask import Blueprint
@@ -27,6 +28,7 @@ bp_login = Blueprint('login', __name__, url_prefix='/login/')
 
 
 @bp_login.route("/", methods=['POST'])
+@require_appkey
 @swag_from(methods=['POST'])
 @expects_json(schema_login_user)
 def login():

@@ -73,8 +73,8 @@ def insert_initial_values():
     if api_token_bo is None:
         api_token_bo = 'test'
 
-    db.session.add(APIKeyToken(id=0, name_from='BusinessCore', api_key_token=str(api_token_bc), active=True))
-    db.session.add(APIKeyToken(id=1, name_from='BackOffice', api_key_token=str(api_token_bo), active=True))
+    db.session.add(APIKeyToken(name_from='BusinessCore', api_key_token=str(api_token_bc), active=True))
+    db.session.add(APIKeyToken(name_from='BackOffice', api_key_token=str(api_token_bo), active=True))
     db.session.commit()
 
     if not current_app.config['TESTING']:

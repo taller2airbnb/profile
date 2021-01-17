@@ -36,6 +36,7 @@ def business():
 
 
 @bp_homeinfo.route("/health", methods=['GET'])
+@require_appkey
 @swag_from(methods=['GET'])
 def health():
     """

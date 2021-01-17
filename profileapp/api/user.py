@@ -11,6 +11,7 @@ bp_user = Blueprint('user', __name__, url_prefix='/user/')
 
 
 @bp_user.route("/", methods=['POST'])
+@require_appkey
 @swag_from(methods=['POST'])
 @expects_json(schema_new_user)
 def register_new_user_api():
@@ -96,6 +97,7 @@ def register_new_user_api():
 
 
 @bp_user.route("/", methods=['PUT'])
+@require_appkey
 @swag_from(methods=['PUT'])
 @expects_json(schema_modify_user)
 def modify_user_api():
@@ -148,6 +150,7 @@ def modify_user_api():
 
 
 @bp_user.route("/<int:user_id>/blocked_status/", methods=['PUT'])
+@require_appkey
 @swag_from(methods=['PUT'])
 def blocked_status_api(user_id):
     """
@@ -190,6 +193,7 @@ def blocked_status_api(user_id):
 
 
 @bp_user.route("/<string:user_mail>/password/", methods=['PUT'])
+@require_appkey
 @swag_from(methods=['PUT'])
 def new_password_api(user_mail):
     """
@@ -236,6 +240,7 @@ def new_password_api(user_mail):
 
 
 @bp_user.route("/<int:id>", methods=['GET'])
+@require_appkey
 @swag_from(methods=['GET'])
 def get_fields_from_user_api(id):
     """
@@ -282,6 +287,7 @@ def get_fields_from_user_api(id):
 
 
 @bp_user.route("/", methods=['GET'])
+@require_appkey
 @swag_from(methods=['GET'])
 def get_fields_from_users_api():
     """
