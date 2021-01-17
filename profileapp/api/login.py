@@ -58,6 +58,8 @@ def login():
               google_token:
                 type: string
                 description: identifier representing a google user - GoogleUser
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful profile creation

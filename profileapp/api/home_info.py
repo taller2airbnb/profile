@@ -44,6 +44,8 @@ def health():
     ---
     tags:
       - health
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: Status

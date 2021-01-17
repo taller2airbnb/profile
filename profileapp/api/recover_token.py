@@ -34,6 +34,8 @@ def generate_recover_token(user_mail):
         name: user_mail
         type: string
         required: true
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful token recover creation

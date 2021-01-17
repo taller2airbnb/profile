@@ -52,8 +52,6 @@ def create_app(my_config=None):
     app.register_blueprint(bp_recover_token)
 
     # setup swagger
-    #swagger = Swagger(app)
-
     SWAGGER_TEMPLATE = {
         "securityDefinitions": {"APIKeyHeader": {"type": "apiKey", "name": "Token", "in": "header"}}}
 

@@ -72,6 +72,8 @@ def register_new_user_api():
               user_logged_id:
                 type: integer
                 description: Id of the user that creates the admin. - Admin
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful profile creation
@@ -128,6 +130,8 @@ def modify_user_api():
               id:
                 type: integer
                 description: Unique identifier for user whose fields will be modified.
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful user modification.
@@ -168,6 +172,8 @@ def blocked_status_api(user_id):
               new_status:
                 type: boolean
                 description: New blocked status.
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful change of user blocked status.
@@ -212,6 +218,8 @@ def new_password_api(user_mail):
               new_password:
                 type: string
                 description: New password.
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful change of user blocked status.
@@ -241,6 +249,8 @@ def get_fields_from_user_api(id):
         name: id
         type: integer
         required: true
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A single user info
@@ -280,6 +290,8 @@ def get_fields_from_users_api():
     ---
     tags:
       - user
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A single user info
@@ -336,6 +348,8 @@ def add_push_token_api(user_id):
               push_token:
                 type: string
                 description: New push token.
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful change of user blocked status.

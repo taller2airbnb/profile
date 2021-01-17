@@ -65,6 +65,18 @@ class APIKeyToken(db.Model):
 
 
 def insert_initial_values():
+    api_token_bc = os.environ.get('API_BC')
+    if api_token_bc is None:
+        api_token_bc = 'test'
+
+    api_token_bo = os.environ.get('API_BO')
+    if api_token_bo is None:
+        api_token_bo = 'test'
+
+    db.session.add(APIKeyToken(id=0, name_from='BusinessCore', api_key_token=str(api_token_bc), active=True))
+    db.session.add(APIKeyToken(id=1, name_from='BackOffice', api_key_token=str(api_token_bo), active=True))
+    db.session.commit()
+
     if not current_app.config['TESTING']:
         #Profiles
         db.session.add(Profile(id_profile=0, description='admin'))
@@ -96,16 +108,5 @@ def insert_initial_values():
         db.session.add(ProfileUser(id_user=4, id_profile=2))
         db.session.commit()
 
-        api_token_bc = os.environ.get('API_BC')
-        if password is None:
-            api_token_bc = 'test'
-
-        api_token_bo = os.environ.get('API_BO')
-        if password is None:
-            api_token_bo = 'test'
-
-        db.session.add(APIKeyToken(id=0, name_from='BusinessCore', api_key_token=api_token_bc, active=True))
-        db.session.add(APIKeyToken(id=0, name_from='BackOffice', api_key_token=api_token_bo, active=True))
-        db.session.commit()
 
 

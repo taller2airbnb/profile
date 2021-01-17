@@ -46,6 +46,8 @@ def add_new_profile():
               description:
                 type: string
                 description: representing a profile description
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful profile creation
@@ -95,6 +97,8 @@ def get_all_profiles():
       - name: body
         in: body
         required: false
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A list of profiles created
