@@ -10,6 +10,8 @@ def require_appkey(view_function):
     @wraps(view_function)
     # the new, post-decoration function. Note *args and **kwargs here.
     def decorated_function(*args, **kwargs):
+        if current_app.config['TESTING']:
+            return view_function(*args, **kwargs)
         try:
             token = validate_existent_token(request.headers)
             if request.headers.get('Token') and request.headers.get('Token') == token:
