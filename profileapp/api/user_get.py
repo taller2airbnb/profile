@@ -3,7 +3,7 @@ from flask import jsonify
 
 from profileapp.Errors.ProfileAppException import ProfileAppException
 from profileapp.api.utils import validate_user_id_exists
-from profileapp.model import Users
+from profileapp.model import Users, ProfileUser
 
 
 def get_fields_from_user(id):
@@ -15,13 +15,14 @@ def get_fields_from_user(id):
         return jsonify({'Error': e.message}), e.error_code
 
     user = Users.query.filter_by(id_user=id).first()
-
+    profile_user = ProfileUser.query.filter_by(id_user=user.id_user).first()
     response_object = {
         'id': user.id_user,
         'first_name': user.first_name,
         'last_name': user.last_name,
         'alias': user.alias,
         'email': user.email,
+        'profile': profile_user.id_profile,
         'national_id': user.national_id,
         'national_id_type': user.national_id_type,
         'blocked': user.blocked,
@@ -38,12 +39,14 @@ def get_fields_from_users():
     users_list = []
 
     for user in users:
+        profile_user = ProfileUser.query.filter_by(id_user=user.id_user).first()
         user_object = {
             'id': user.id_user,
             'first_name': user.first_name,
             'last_name': user.last_name,
             'alias': user.alias,
             'email': user.email,
+            'profile': profile_user.id_profile,
             'national_id': user.national_id,
             'national_id_type': user.national_id_type,
             'blocked': user.blocked,
