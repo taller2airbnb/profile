@@ -10,6 +10,7 @@ from flask_mail import Message, Mail
 
 from profileapp import database
 from profileapp.Errors.ProfileAppException import ProfileAppException
+from profileapp.api.api_validator import require_appkey
 from profileapp.api.utils import validate_user_id_exists, get_email_from_user_id, validate_is_not_google_user_by_id, \
     validate_existent_user_by_mail, get_user_id_from_mail
 from profileapp.model import RecoverUserToken
@@ -18,6 +19,7 @@ bp_recover_token = Blueprint('recover_token', __name__, url_prefix='/recover_tok
 
 
 @bp_recover_token.route("/<string:user_mail>", methods=['POST'])
+@require_appkey
 @swag_from(methods=['POST'])
 def generate_recover_token(user_mail):
     """
@@ -34,6 +36,8 @@ def generate_recover_token(user_mail):
         name: user_mail
         type: string
         required: true
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful token recover creation

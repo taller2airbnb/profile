@@ -3,6 +3,8 @@ from flask import Blueprint
 from flask import jsonify, render_template
 from flasgger.utils import swag_from
 
+from profileapp.api.api_validator import require_appkey
+
 bp_homeinfo = Blueprint('status_info', __name__, url_prefix='/')
 
 
@@ -14,6 +16,7 @@ def home():
 
 
 @bp_homeinfo.route("/business-status")
+@require_appkey
 @swag_from(methods=['GET'])
 def business():
     """
@@ -22,6 +25,8 @@ def business():
     ---
     tags:
       - health
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: Status
@@ -31,6 +36,7 @@ def business():
 
 
 @bp_homeinfo.route("/health", methods=['GET'])
+@require_appkey
 @swag_from(methods=['GET'])
 def health():
     """
@@ -39,6 +45,8 @@ def health():
     ---
     tags:
       - health
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: Status

@@ -2,6 +2,7 @@ from flasgger.utils import swag_from
 from flask import Blueprint
 from flask_expects_json import expects_json
 
+from profileapp.api.api_validator import require_appkey
 from profileapp.api.user_get import get_fields_from_users, get_fields_from_user
 from profileapp.api.user_post import register_new_user, schema_new_user
 from profileapp.api.user_put import modify_user, schema_modify_user, blocked_status, new_password, add_push_token
@@ -10,6 +11,7 @@ bp_user = Blueprint('user', __name__, url_prefix='/user/')
 
 
 @bp_user.route("/", methods=['POST'])
+@require_appkey
 @swag_from(methods=['POST'])
 @expects_json(schema_new_user)
 def register_new_user_api():
@@ -71,6 +73,8 @@ def register_new_user_api():
               user_logged_id:
                 type: integer
                 description: Id of the user that creates the admin. - Admin
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful profile creation
@@ -93,6 +97,7 @@ def register_new_user_api():
 
 
 @bp_user.route("/", methods=['PUT'])
+@require_appkey
 @swag_from(methods=['PUT'])
 @expects_json(schema_modify_user)
 def modify_user_api():
@@ -127,6 +132,8 @@ def modify_user_api():
               id:
                 type: integer
                 description: Unique identifier for user whose fields will be modified.
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful user modification.
@@ -143,6 +150,7 @@ def modify_user_api():
 
 
 @bp_user.route("/<int:user_id>/blocked_status/", methods=['PUT'])
+@require_appkey
 @swag_from(methods=['PUT'])
 def blocked_status_api(user_id):
     """
@@ -167,6 +175,8 @@ def blocked_status_api(user_id):
               new_status:
                 type: boolean
                 description: New blocked status.
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful change of user blocked status.
@@ -183,6 +193,7 @@ def blocked_status_api(user_id):
 
 
 @bp_user.route("/<string:user_mail>/password/", methods=['PUT'])
+@require_appkey
 @swag_from(methods=['PUT'])
 def new_password_api(user_mail):
     """
@@ -211,6 +222,8 @@ def new_password_api(user_mail):
               new_password:
                 type: string
                 description: New password.
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful change of user blocked status.
@@ -227,6 +240,7 @@ def new_password_api(user_mail):
 
 
 @bp_user.route("/<int:id>", methods=['GET'])
+@require_appkey
 @swag_from(methods=['GET'])
 def get_fields_from_user_api(id):
     """
@@ -240,6 +254,8 @@ def get_fields_from_user_api(id):
         name: id
         type: integer
         required: true
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A single user info
@@ -271,6 +287,7 @@ def get_fields_from_user_api(id):
 
 
 @bp_user.route("/", methods=['GET'])
+@require_appkey
 @swag_from(methods=['GET'])
 def get_fields_from_users_api():
     """
@@ -279,6 +296,8 @@ def get_fields_from_users_api():
     ---
     tags:
       - user
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A single user info
@@ -310,6 +329,7 @@ def get_fields_from_users_api():
 
 
 @bp_user.route("/<int:user_id>/push_token/", methods=['PUT'])
+@require_appkey
 @swag_from(methods=['PUT'])
 def add_push_token_api(user_id):
     """
@@ -334,6 +354,8 @@ def add_push_token_api(user_id):
               push_token:
                 type: string
                 description: New push token.
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful change of user blocked status.

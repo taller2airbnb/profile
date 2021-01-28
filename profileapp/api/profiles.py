@@ -6,6 +6,7 @@ from flask import request
 from flask_expects_json import expects_json
 
 from profileapp import database
+from profileapp.api.api_validator import require_appkey
 from profileapp.model import Profile
 
 schema_new_user = {
@@ -20,6 +21,7 @@ bp_profiles = Blueprint('profiles', __name__, url_prefix='/profiles/')
 
 
 @bp_profiles.route("/add/", methods=['POST'])
+@require_appkey
 @swag_from(methods=['POST'])
 @expects_json(schema_new_user)
 def add_new_profile():
@@ -46,6 +48,8 @@ def add_new_profile():
               description:
                 type: string
                 description: representing a profile description
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A successful profile creation
@@ -81,6 +85,7 @@ def add_new_profile():
 
 
 @bp_profiles.route("/", methods=['GET'])
+@require_appkey
 @swag_from(methods=['GET'])
 def get_all_profiles():
     """
@@ -95,6 +100,8 @@ def get_all_profiles():
       - name: body
         in: body
         required: false
+    security:
+      - APIKeyHeader: ['Token']
     responses:
       200:
         description: A list of profiles created

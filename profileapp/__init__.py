@@ -14,6 +14,7 @@ from profileapp.api.login import bp_login
 from profileapp.api.profiles import bp_profiles
 from profileapp.api.user import bp_user
 from profileapp.api.recover_token import bp_recover_token
+from profileapp.api.apikey import bp_apikey
 
 
 def create_app(my_config=None):
@@ -39,6 +40,7 @@ def create_app(my_config=None):
     CORS(bp_login)
     CORS(bp_user)
     CORS(bp_recover_token)
+    CORS(bp_apikey)
 
     @app.before_first_request
     def create_db():
@@ -50,9 +52,13 @@ def create_app(my_config=None):
     app.register_blueprint(bp_login)
     app.register_blueprint(bp_user)
     app.register_blueprint(bp_recover_token)
+    app.register_blueprint(bp_apikey)
 
     # setup swagger
-    swagger = Swagger(app)
+    SWAGGER_TEMPLATE = {
+        "securityDefinitions": {"APIKeyHeader": {"type": "apiKey", "name": "Token", "in": "header"}}}
+
+    swagger = Swagger(app, template=SWAGGER_TEMPLATE)
 
     # setup logging
     logging.basicConfig(filename='error.log', level=logging.DEBUG)
