@@ -391,12 +391,79 @@ class FlaskTest(unittest.TestCase):
         self.assertEqual(data_back['users'][1]['last_name'], test_user_anf['last_name'])
         self.assertEqual(status_code, 200)
 
+    def test_block_user_successfully(self):
+        tester = create_app().test_client(self)
+
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ADMIN,
+                    content_type='application/json')
+
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ANFITRION,
+                    content_type='application/json')
+
+        tester.post("/user/",
+                    data=VALID_ADMIN1_REGISTER,
+                    content_type='application/json')
+
+        tester.put("/user/1/blocked_status/",
+                   data=json.dumps({'new_status': True}),
+                   content_type='application/json')
+
+        response = tester.get("/user/")
+
+        status_code = response.status_code
+        data_back = json.loads(response.get_data(as_text=True))
+        print(data_back)
+        self.assertEqual(data_back['users'][0]['blocked'], True)
+        self.assertEqual(status_code, 200)
+
     def test_block_non_register_user_fails(self):
         # Login with anfitrion and try to create admin must fail
         tester = create_app().test_client(self)
 
         response = tester.put("/user/1/blocked_status/",
                               data=json.dumps({'new_status': True}),
+                              content_type='application/json')
+
+        status_code = response.status_code
+        data_back_admin = json.loads(response.get_data(as_text=True))
+        self.assertEqual(data_back_admin['Error'], "Not exists User: 1")
+        self.assertEqual(status_code, 404)
+
+    def test_new_password_for_user_succesfully(self):
+        tester = create_app().test_client(self)
+
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ADMIN,
+                    content_type='application/json')
+
+        tester.post("/profiles/add/",
+                    data=VALID_PROFILE_ANFITRION,
+                    content_type='application/json')
+
+        tester.post("/user/",
+                    data=VALID_ADMIN1_REGISTER,
+                    content_type='application/json')
+
+        tester.put("/user/1/push_token/",
+                   data=json.dumps({'push_token': 'tokenbaby'}),
+                   content_type='application/json')
+
+        response = tester.get("/user/")
+
+        status_code = response.status_code
+        data_back = json.loads(response.get_data(as_text=True))
+        print(data_back)
+        self.assertEqual(data_back['users'][0]['push_token'], 'tokenbaby')
+        self.assertEqual(status_code, 200)
+
+    def test_add_push_token_non_register_user_fails(self):
+        # Login with anfitrion and try to create admin must fail
+        tester = create_app().test_client(self)
+
+        response = tester.put("/user/1/push_token/",
+                              data=json.dumps({'push_token': 'tokenbaby'}),
                               content_type='application/json')
 
         status_code = response.status_code
