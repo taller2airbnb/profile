@@ -13,7 +13,7 @@ bp_db_manage = Blueprint('db', __name__, url_prefix='/db/')
 @swag_from(methods=['PUT'])
 def restart_db():
     """
-    Restart DB to Default Values
+    NOT WORKING - Restart DB to Default Values
     ---
     tags:
       - DB
@@ -24,7 +24,7 @@ def restart_db():
         description: Status
     """
 
-    database.drop_and_create_tables()
-    model.insert_initial_values()
+    # database.drop_and_create_tables()
+    # model.insert_initial_values()
 
-    return jsonify({"status": "DB Restarted", "from": "Profile"}), 200
+    return jsonify({"Nothing done"}), 200
