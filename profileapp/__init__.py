@@ -15,6 +15,7 @@ from profileapp.api.profiles import bp_profiles
 from profileapp.api.user import bp_user
 from profileapp.api.recover_token import bp_recover_token
 from profileapp.api.apikey import bp_apikey
+from profileapp.api.db_manage import bp_db_manage
 
 
 def create_app(my_config=None):
@@ -41,11 +42,13 @@ def create_app(my_config=None):
     CORS(bp_user)
     CORS(bp_recover_token)
     CORS(bp_apikey)
+    CORS(bp_db_manage)
 
     @app.before_first_request
     def create_db():
         database.create_tables()
-        model.insert_initial_values()
+
+    #    model.insert_initial_values()
 
     app.register_blueprint(bp_homeinfo)
     app.register_blueprint(bp_profiles)
@@ -53,6 +56,7 @@ def create_app(my_config=None):
     app.register_blueprint(bp_user)
     app.register_blueprint(bp_recover_token)
     app.register_blueprint(bp_apikey)
+    app.register_blueprint(bp_db_manage)
 
     # setup swagger
     SWAGGER_TEMPLATE = {

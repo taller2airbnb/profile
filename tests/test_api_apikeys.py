@@ -22,7 +22,7 @@ class FlaskTest(unittest.TestCase):
         self.assertEqual(status_code, 200)
         response = tester.get("/apikey/")
         data = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data['apikeys'][2]['name_from'], 'Alguien')
+        self.assertEqual(data['apikeys'][0]['name_from'], 'Alguien')
         self.assertEqual(status_code, 200)
 
     def test_create_and_change_active_status_apikeys(self):
@@ -34,11 +34,11 @@ class FlaskTest(unittest.TestCase):
         self.assertEqual(status_code, 200)
         response = tester.get("/apikey/")
         data = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data['apikeys'][2]['name_from'], 'Alguien')
+        self.assertEqual(data['apikeys'][0]['name_from'], 'Alguien')
         self.assertEqual(status_code, 200)
-        response = tester.put("/apikey/3/active_status",
+        response = tester.put("/apikey/1/active_status",
                               data=json.dumps({'active': False}),
                               content_type='application/json')
         response = tester.get("/apikey/")
         data = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data['apikeys'][2]['active'], False)
+        self.assertEqual(data['apikeys'][0]['active'], False)
