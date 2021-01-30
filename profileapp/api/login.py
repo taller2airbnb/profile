@@ -119,7 +119,10 @@ def login_google_user(post_data):
     validate_user_not_blocked(user.id_user)
     validate_is_google_user(user)
 
-    return jsonify({'Token Validated': 'Ok', 'id': user.id_user, "Mail": user.email}), 200
+    profile_user = ProfileUser.query.filter_by(id_user=user.id_user).first()
+
+    return jsonify({'Token Validated': 'Ok', 'id': user.id_user, "Mail": user.email,
+                    'profile': profile_user.id_profile}), 200
 
 
 def login_bookbnb_user(post_data):
