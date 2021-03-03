@@ -121,8 +121,8 @@ def login_google_user(post_data):
 
     profile_user = ProfileUser.query.filter_by(id_user=user.id_user).first()
 
-    return jsonify({'Token Validated': 'Ok', 'id': user.id_user, "Mail": user.email,
-                    'profile': profile_user.id_profile}), 200
+    return jsonify({'Token Validated': 'Ok', 'id': user.id_user, 'name': user.first_name, 'alias': user.alias,
+                    "email": user.email, 'profile': profile_user.id_profile}), 200
 
 
 def login_bookbnb_user(post_data):
