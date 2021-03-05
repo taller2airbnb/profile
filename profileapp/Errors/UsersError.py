@@ -101,7 +101,7 @@ class UserIsBlockedError(ProfileAppException):
 class UserTokenRecoverError(ProfileAppException):
     def __init__(self, user_info, message="Token recover invalid"):
         current_app.logger.error("The token for user: " + str(user_info) + " is invalid.")
-        self.message = message + str(user_info)
+        self.message = message
         self.error_code = 403
         super().__init__(self.message, self.error_code)
 
